@@ -1,0 +1,7 @@
+Phase parameters needed
+	-R
+	-S
+	-c
+	-X -N -F -O -l -x
+
+	-p -q -X -N -F
