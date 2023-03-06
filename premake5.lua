@@ -1,5 +1,11 @@
 workspace("ConvPhase")
 	configurations({"debug", "release"})
+	newoption({
+		trigger = "nofile",
+		description = "No communication over files"
+	})
+
+
 
 	project("ConvPhase")
 		kind("ConsoleApp")
@@ -7,25 +13,48 @@ workspace("ConvPhase")
 		cppdialect("C++17")
 
 		files({"src/*.cpp"})
-		includedirs({"include", "SeqPHASE/cpp/include", "/home/digitaldragon/.local/share/haxe/lib/hxcpp/4,2,1/include"})
+		removefiles({"src/python_wrapper.cpp"})
+		includedirs({
+			"include",
+			"SeqPHASE/cpp/include",
+			"/home/digitaldragon/.local/share/haxe/lib/hxcpp/4,2,1/include",
+			"/usr/include/python*"
+		})
 		libdirs({"."})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
-		links({"seqphase", "phase"})
+		links({
+			"seqphase",
+			"phase"
+		})
+		defines({"CP_PHASE_LIB"})
 		buildoptions({})
 		linkoptions({})
 		warnings("Extra")
-		disablewarnings({"unused-parameter", "reorder", "deprecated-copy", "invalid-offsetof", "sign-compare", "unknown-pragmas"})
+		disablewarnings({
+			"unused-parameter",
+			"reorder",             --warnings caused by hxcpp
+			"deprecated-copy",
+			"invalid-offsetof",
+			"sign-compare",
+			"unknown-pragmas"
+		})
+
+		filter("options:nofile")
+			defines({"CP_PHASE_NOFILE"})
 
 		filter("configurations:debug")
 			defines({"DEBUG"})
 			optimize("Debug")
 			symbols("On")
+
 		filter("configurations:release")
 			defines({"NDEBUG"})
 			optimize("Full")
 			--symbols("Off")
-	
+
+
+
 	project("phase")
 		kind("StaticLib")
 		language("C++")
@@ -35,11 +64,18 @@ workspace("ConvPhase")
 		includedirs({"phase/src/phase*"})
 		location("build")
 		links({})
-		defines({"CONVPHASE_LIBRARY"})
+		defines({
+			"CP_PHASE_LIB",
+			"CP_PHASE_DISABLE_COUT",
+			"CP_PHASE_DISABLE_CERR"
+		})
 		buildoptions({})
 		linkoptions({})
 		warnings("Off")
 		disablewarnings({})
+
+		filter("options:nofile")
+			defines({"CP_PHASE_NOFILE"})
 
 		filter("configurations:debug")
 			defines({"DEBUG"})
@@ -50,6 +86,8 @@ workspace("ConvPhase")
 			defines({"NDEBUG"})
 			optimize("Full")
 			--symbols("Off")
+
+
 
 	--[[
 	project("SeqPhase")

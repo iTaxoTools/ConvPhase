@@ -5,5 +5,7 @@ The purpose of this program is to combine the phase and SeqPHASE project into on
 Unfortunately the communication between the programs is done by using files, because phase only accept an input and an output file and SeqPHASE also accepts only input files and has fixed output files. The final output after executing both SeqPHASE steps and phase will be in phased.fasta.
 
 Requirements:
+premake
+C++ compiler
 haxe
 hxcpp
