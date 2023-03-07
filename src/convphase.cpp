@@ -1,6 +1,5 @@
 #include "convphase.h"
 #include "hxcpp_symbols.h"
-#include "phase.h"
 
 #include "SeqPhase1.h"
 #include "SeqPhase1Result.h"
@@ -52,19 +51,18 @@ SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2, std::strin
 		data.constData = result->getConstFile().c_str();
 	return data;
 }
-PhaseResult phase(std::string input, std::vector<char const*> options){
+PhaseOutput phase(PhaseInput input, std::vector<char const*> options){
 	std::vector<char const*> args{""};
 	args.insert(args.end(), options.begin(), options.end());
 	int argc = args.size();
 	char** argv = createArgArray(args);
 
-	std::istringstream inStream{input};
-	std::ostringstream outStream{};
-	phase(inStream, outStream, argc, argv);
-	PhaseResult data{outStream.str()};
+	PhaseData data{input};
+	int ret = phase(data, argc, argv);
+	assert(!ret);
 
 	deleteArgArray(argv, args.size());
-	return data;
+	return data.getOutput();
 }
 std::string seqPhaseStep2(std::string phaseFile, std::string constFile, bool reduce, bool sort){
 	Individuals result = SeqPhase2_obj::parse(
@@ -80,7 +78,7 @@ std::string convPhase(std::string input, std::vector<char const*> options, bool 
 	SeqPhaseStep1Result step1 = seqPhaseStep1(input);
 	//printf("%s\n", step1.inpData.c_str());
 
-	PhaseResult phaseResult = phase(step1.inpData, options);
+	PhaseOutput phaseResult = phase(PhaseInput{step1.inpData}, options);
 	//printf("%s\n", phaseResult.output.c_str());
 
 	std::string step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);

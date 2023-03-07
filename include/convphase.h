@@ -1,6 +1,8 @@
 #ifndef CONVPHASE_H
 #define CONVPHASE_H
 
+#include "phase.h"
+
 #include <vector>
 #include <string>
 
@@ -9,15 +11,12 @@ struct SeqPhaseStep1Result{
 	std::string knownData;
 	std::string constData;
 };
-struct PhaseResult{
-	std::string output;
-};
 
 void initHxcpp(); //Must be called before seqPhaseStep1 and seqPhaseStep2
 
 #ifdef CP_PHASE_NOFILE
 SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2 = "", std::string str3 = "");
-PhaseResult phase(std::string input, std::vector<char const*> options = std::vector<char const*>{});
+PhaseOutput phase(PhaseInput input, std::vector<char const*> options = std::vector<char const*>{});
 std::string seqPhaseStep2(
 	std::string phaseFile, std::string constFile = "",
 	bool reduce = false, bool sort = false
