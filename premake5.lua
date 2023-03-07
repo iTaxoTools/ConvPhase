@@ -1,8 +1,16 @@
 workspace("ConvPhase")
 	configurations({"debug", "release"})
 	newoption({
-		trigger = "nofile",
-		description = "No communication over files"
+		trigger = "fileComm",
+		description = "Communication with files"
+	})
+	newoption({
+		trigger = "phaseCout",
+		description = "Enable cout of phase"
+	})
+	newoption({
+		trigger = "phaseCerr",
+		description = "Enable cerr of phase"
 	})
 
 
@@ -27,7 +35,7 @@ workspace("ConvPhase")
 			"seqphase",
 			"phase"
 		})
-		defines({"CP_PHASE_LIB"})
+		defines({"CP_PHASE_LIB", "CP_PHASE_NOFILE"})
 		buildoptions({})
 		linkoptions({})
 		warnings("Extra")
@@ -40,8 +48,8 @@ workspace("ConvPhase")
 			"unknown-pragmas"
 		})
 
-		filter("options:nofile")
-			defines({"CP_PHASE_NOFILE"})
+		filter("options:fileComm")
+			removedefines({"CP_PHASE_NOFILE"})
 
 		filter("configurations:debug")
 			defines({"DEBUG"})
@@ -67,15 +75,20 @@ workspace("ConvPhase")
 		defines({
 			"CP_PHASE_LIB",
 			"CP_PHASE_DISABLE_COUT",
-			"CP_PHASE_DISABLE_CERR"
+			"CP_PHASE_DISABLE_CERR",
+			"CP_PHASE_NOFILE"
 		})
 		buildoptions({})
 		linkoptions({})
 		warnings("Off")
 		disablewarnings({})
 
-		filter("options:nofile")
-			defines({"CP_PHASE_NOFILE"})
+		filter("options:fileComm")
+			removedefines({"CP_PHASE_NOFILE"})
+		filter("options:phaseCout")
+			removedefines({"CP_PHASE_DISABLE_COUT"})
+		filter("options:phaseCerr")
+			removedefines({"CP_PHASE_DISABLE_CERR"})
 
 		filter("configurations:debug")
 			defines({"DEBUG"})

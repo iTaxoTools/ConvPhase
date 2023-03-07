@@ -2,8 +2,6 @@ build
 session.vim
 Makefile
 
-/SeqPHASE
-/phase
 libseqphase.a
 
 phase.*
