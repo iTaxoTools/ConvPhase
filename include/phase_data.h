@@ -18,10 +18,16 @@ struct PhaseInput{
 struct PhaseOutput{
 	std::string output;
 
-	std::string freq;
+	std::string freqs;
 	std::string monitor;
 	std::string hbg;
 	std::string probs;
+
+	std::string recom;
+	std::string sample;
+	std::string pairs;
+	std::string signif;
+	std::string hot;
 
 	std::string cout;
 	std::string cerr;
@@ -36,7 +42,23 @@ struct PhaseData{
 	}
 
 	PhaseOutput getOutput(){
-		return PhaseOutput{output, freq, monitor, hbg, probs, cout, cerr};
+		return PhaseOutput{
+			output,
+
+			freqs,
+			monitor,
+			hbg,
+			probs,
+
+			recom,
+			sample,
+			pairs,
+			signif,
+			hot,
+
+			cout,
+			cerr
+		};
 	}
 
 	std::string input;
@@ -46,10 +68,16 @@ struct PhaseData{
 	std::string known;
 	std::string init;
 
-	std::string freq;
+	std::string freqs;
 	std::string monitor;
 	std::string hbg;
 	std::string probs;
+
+	std::string recom;
+	std::string sample;
+	std::string pairs;
+	std::string signif;
+	std::string hot;
 
 	std::string cout;
 	std::string cerr;

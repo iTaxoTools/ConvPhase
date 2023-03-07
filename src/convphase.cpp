@@ -80,6 +80,17 @@ std::string convPhase(std::string input, std::vector<char const*> options, bool 
 
 	PhaseOutput phaseResult = phase(PhaseInput{step1.inpData}, options);
 	//printf("%s\n", phaseResult.output.c_str());
+	//printf("%s\n", phaseResult.pairs.c_str());
+	printf("freqs: \n%s\n\n\n", phaseResult.freqs.c_str());
+	printf("monitor: \n%s\n\n\n", phaseResult.monitor.c_str());
+	printf("hbg: \n%s\n\n\n", phaseResult.hbg.c_str());
+	printf("probs: \n%s\n\n\n", phaseResult.probs.c_str());
+
+	printf("recom: \n%s\n\n\n", phaseResult.recom.c_str());
+	printf("sample: \n%s\n\n\n", phaseResult.sample.c_str());
+	printf("pairs: \n%s\n\n\n", phaseResult.pairs.c_str());
+	printf("signif: \n%s\n\n\n", phaseResult.signif.c_str());
+	printf("hot: \n%s\n\n\n", phaseResult.hot.c_str());
 
 	std::string step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
 	//printf("%s\n", step2.c_str());

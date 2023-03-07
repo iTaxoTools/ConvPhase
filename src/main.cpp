@@ -13,7 +13,7 @@ int main(int argc, char* argv[]){
 
 #ifdef CP_PHASE_NOFILE
 	std::string result = convPhase(readFile(inputFile), options);
-	printf("%s\n", result.c_str());
+	//printf("%s\n", result.c_str());
 #else
 	convPhase(inputFile, options);
 #endif
