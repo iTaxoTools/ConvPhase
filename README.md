@@ -1,4 +1,4 @@
-ConvPhase - A convinient phase program
+ConvPhase - A convenient phase program
 
 The purpose of this program is to combine the phase and SeqPHASE project into one program and make most of the configurations available. The project is intended to be used as library, but can also be used as standalone executable
 
