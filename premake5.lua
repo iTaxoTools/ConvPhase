@@ -1,12 +1,26 @@
 workspace("ConvPhase")
 	configurations({"debug", "release"})
 	newoption({
+		trigger = "kind",
+		description = "Kind of binary when building",
+		default = "shared",
+		allowed = {
+			{"exe", "Executable"},
+			{"static", "Static library"},
+			{"shared", "Shared library"}
+		}
+	})
+	newoption({
 		trigger = "fileComm",
 		description = "Communication with files"
 	})
 	newoption({
 		trigger = "phaseCout",
 		description = "Enable cout of phase"
+	})
+	newoption({
+		trigger = "disablePython",
+		description = "Disable Python bindings"
 	})
 	newoption({
 		trigger = "phaseCerr",
@@ -16,12 +30,17 @@ workspace("ConvPhase")
 
 
 	project("ConvPhase")
-		kind("ConsoleApp")
+		filter("options:kind=exe")
+			kind("ConsoleApp")
+		filter("options:kind=static")
+			kind("StaticLib")
+		filter("options:kind=shared")
+			kind("SharedLib")
+		filter("options:*")
 		language("C++")
 		cppdialect("C++17")
 
 		files({"src/*.cpp"})
-		removefiles({"src/python_wrapper.cpp"})
 		includedirs({
 			"include",
 			"SeqPHASE/cpp/include",
@@ -31,12 +50,14 @@ workspace("ConvPhase")
 		libdirs({"."})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
+		targetname("convphase")
 		links({
 			"seqphase",
-			"phase"
+			"phase",
+			"python3.10"
 		})
 		defines({"CP_PHASE_LIB", "CP_PHASE_NOFILE"})
-		buildoptions({})
+		buildoptions({"-fPIC", "-pedantic"})
 		linkoptions({})
 		warnings("Extra")
 		disablewarnings({
@@ -48,6 +69,9 @@ workspace("ConvPhase")
 			"unknown-pragmas"
 		})
 
+		filter({"options:disablePython or options:fileComm"})
+			removefiles({"src/python_wrapper.cpp"})
+			removelinks({"python3.10"})
 		filter("options:fileComm")
 			removedefines({"CP_PHASE_NOFILE"})
 
@@ -78,7 +102,7 @@ workspace("ConvPhase")
 			"CP_PHASE_DISABLE_CERR",
 			"CP_PHASE_NOFILE"
 		})
-		buildoptions({})
+		buildoptions({"-fPIC"})
 		linkoptions({})
 		warnings("Off")
 		disablewarnings({})
@@ -102,8 +126,7 @@ workspace("ConvPhase")
 
 
 
-	--[[
-	project("SeqPhase")
+	--[[project("SeqPhase")
 		kind("Makefile")
 		--location("build")
 		buildmessage("Building SeqPhase")
@@ -111,4 +134,4 @@ workspace("ConvPhase")
 			"cd SeqPHASE/haxe; haxe --cpp ../cpp -D static_link SeqPhase1.hx SeqPhase2.hx",
 			"cp SeqPHASE/cpp/liboutput.a build/bin/debug/libseqphase.a"
 		})
-	]]
+		]]

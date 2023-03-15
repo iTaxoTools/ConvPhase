@@ -5,15 +5,25 @@
 
 struct PhaseInput{
 	PhaseInput() = default;
-	PhaseInput(std::string in){
-		input = in;
+	PhaseInput(std::string input):
+		input{input}{
+	}
+	PhaseInput(std::string input, std::string known):
+		input{input},
+		known{known}{
+		}
+	PhaseInput(std::string input, std::string known, std::string init, std::string delta):
+		input{input},
+		known{known},
+		init{init},
+		delta{delta}{
 	}
 
 	std::string input;
 
-	std::string delta;
 	std::string known;
 	std::string init;
+	std::string delta;
 };
 struct PhaseOutput{
 	std::string output;
@@ -36,9 +46,9 @@ struct PhaseData{
 	PhaseData() = default;
 	PhaseData(PhaseInput in){
 		input = in.input;
-		delta = in.delta;
 		known = in.known;
 		init  = in.init;
+		delta = in.delta;
 	}
 
 	PhaseOutput getOutput(){
@@ -64,9 +74,9 @@ struct PhaseData{
 	std::string input;
 	std::string output;
 
-	std::string delta;
 	std::string known;
 	std::string init;
+	std::string delta;
 
 	std::string freqs;
 	std::string monitor;

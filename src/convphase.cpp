@@ -26,11 +26,6 @@ void initHxcpp(){
 
 #ifdef CP_PHASE_NOFILE
 SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2, std::string str3){
-//	SeqPhase1Result result = SeqPhase1_obj::doIt(
-//		String::create(str1, strlen(str1)),
-//		file2 ? String::create(file2, strlen(file2)) : null(),
-//		file3 ? String::create(file3, strlen(file3)) : null()
-//	);
 	SeqPhase1Result result = SeqPhase1_obj::doIt(
 		String::create(str1.c_str(), str1.size()),
 		str2.size() ? String::create(str2.c_str(), str2.size()) : null(),
@@ -49,19 +44,21 @@ SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2, std::strin
 		data.knownData = result->getKnownFile().c_str();
 	if(result->hasConstFile())
 		data.constData = result->getConstFile().c_str();
+	//printf("inp:\n%s\n", data.inpData.c_str());
+	//printf("known:\n%s\n", data.knownData.c_str());
+	//printf("const:\n%s\n", data.constData.c_str());
 	return data;
 }
 PhaseOutput phase(PhaseInput input, std::vector<char const*> options){
-	std::vector<char const*> args{""};
-	args.insert(args.end(), options.begin(), options.end());
-	int argc = args.size();
-	char** argv = createArgArray(args);
+	options.insert(options.begin(), "");
+	int argc = options.size();
+	char** argv = createArgArray(options);
 
 	PhaseData data{input};
 	int ret = phase(data, argc, argv);
 	assert(!ret);
 
-	deleteArgArray(argv, args.size());
+	deleteArgArray(argv, options.size());
 	return data.getOutput();
 }
 std::string seqPhaseStep2(std::string phaseFile, std::string constFile, bool reduce, bool sort){
@@ -81,16 +78,19 @@ std::string convPhase(std::string input, std::vector<char const*> options, bool 
 	PhaseOutput phaseResult = phase(PhaseInput{step1.inpData}, options);
 	//printf("%s\n", phaseResult.output.c_str());
 	//printf("%s\n", phaseResult.pairs.c_str());
-	printf("freqs: \n%s\n\n\n", phaseResult.freqs.c_str());
-	printf("monitor: \n%s\n\n\n", phaseResult.monitor.c_str());
-	printf("hbg: \n%s\n\n\n", phaseResult.hbg.c_str());
-	printf("probs: \n%s\n\n\n", phaseResult.probs.c_str());
+	//printf("freqs: \n%s\n\n\n", phaseResult.freqs.c_str());
+	//printf("monitor: \n%s\n\n\n", phaseResult.monitor.c_str());
+	//printf("hbg: \n%s\n\n\n", phaseResult.hbg.c_str());
+	//printf("probs: \n%s\n\n\n", phaseResult.probs.c_str());
 
-	printf("recom: \n%s\n\n\n", phaseResult.recom.c_str());
-	printf("sample: \n%s\n\n\n", phaseResult.sample.c_str());
-	printf("pairs: \n%s\n\n\n", phaseResult.pairs.c_str());
-	printf("signif: \n%s\n\n\n", phaseResult.signif.c_str());
-	printf("hot: \n%s\n\n\n", phaseResult.hot.c_str());
+	//printf("recom: \n%s\n\n\n", phaseResult.recom.c_str());
+	//printf("sample: \n%s\n\n\n", phaseResult.sample.c_str());
+	//printf("pairs: \n%s\n\n\n", phaseResult.pairs.c_str());
+	//printf("signif: \n%s\n\n\n", phaseResult.signif.c_str());
+	//printf("hot: \n%s\n\n\n", phaseResult.hot.c_str());
+	
+	//printf("cout: \n%s\n\n\n", phaseResult.cout.c_str());
+	//printf("cerr: \n%s\n\n\n", phaseResult.cerr.c_str());
 
 	std::string step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
 	//printf("%s\n", step2.c_str());
@@ -118,16 +118,15 @@ void seqPhaseStep1Main(char const* file1, char const* file2, char const* file3){
 	deleteArgArray(argv, args.size());
 }
 int phase(char const* inputFile, char const* outputFile, std::vector<char const*> options){
-	std::vector<char const*> args{""};
-	args.insert(args.end(), options.begin(), options.end());
-	args.push_back(inputFile);
-	args.push_back(outputFile);
-	int argc = args.size();
-	char** argv = createArgArray(args);
+	options.insert(options.begin(), "");
+	options.push_back(inputFile);
+	options.push_back(outputFile);
+	int argc = options.size();
+	char** argv = createArgArray(options);
 
 	int ret = phase(argc, argv);
 
-	deleteArgArray(argv, args.size());
+	deleteArgArray(argv, options.size());
 	return ret;
 }
 void seqPhaseStep2Main(char const* phaseFile, char const* constFile){
