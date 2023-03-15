@@ -19,12 +19,12 @@ workspace("ConvPhase")
 		description = "Enable cout of phase"
 	})
 	newoption({
-		trigger = "disablePython",
-		description = "Disable Python bindings"
-	})
-	newoption({
 		trigger = "phaseCerr",
 		description = "Enable cerr of phase"
+	})
+	newoption({
+		trigger = "noPython",
+		description = "Disable Python bindings"
 	})
 
 
@@ -69,7 +69,7 @@ workspace("ConvPhase")
 			"unknown-pragmas"
 		})
 
-		filter({"options:disablePython or options:fileComm"})
+		filter({"options:noPython or options:fileComm"})
 			removefiles({"src/python_wrapper.cpp"})
 			removelinks({"python3.10"})
 		filter("options:fileComm")
