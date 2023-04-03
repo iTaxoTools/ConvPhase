@@ -8,10 +8,11 @@ python (optional)
 
 
 
-First you have to build SeqPHASE (this step will be automated in the future with premake)
+First you have to build SeqPHASE and copy the library to the root folder of this project(this step will be automated in the future with premake)
 cd SeqPHASE/haxe
 haxe --cpp ../cpp -D static_link SeqPhase1.hx SeqPhase2.hx
 cd ../..
+cp SeqPHASE/cpp/liboutput.a ./libseqphase.a
 
 Next step is to generate the build files with premake
 Windows:

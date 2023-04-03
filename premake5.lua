@@ -26,10 +26,15 @@ workspace("ConvPhase")
 		trigger = "noPython",
 		description = "Disable Python bindings"
 	})
+	newoption({
+		trigger = "haxeInclude",
+		description = "Haxe include path"
+	})
 
 
 
 	project("ConvPhase")
+		--dependson({"SeqPHASE"})
 		filter("options:kind=exe")
 			kind("ConsoleApp")
 		filter("options:kind=static")
@@ -43,21 +48,28 @@ workspace("ConvPhase")
 		files({"src/*.cpp"})
 		includedirs({
 			"include",
-			"SeqPHASE/cpp/include",
-			"/home/digitaldragon/.local/share/haxe/lib/hxcpp/4,2,1/include",
+			--"SeqPHASE/cpp/include",
+			"build/SeqPHASE_cpp/include",
+			--"/home/digitaldragon/.local/share/haxe/lib/hxcpp/4,2,1/include",
 			"/usr/include/python*"
 		})
+		includedirs({_OPTIONS["haxeInclude"]})
+		print(_OPTIONS["haxeInclude"])
+
 		libdirs({"."})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
 		targetname("convphase")
 		links({
 			"seqphase",
+			--"seqphase:shared",
+			--"seqphase:static",
 			"phase",
 			"python3.10"
 		})
 		defines({"CP_PHASE_LIB", "CP_PHASE_NOFILE"})
-		buildoptions({"-fPIC", "-pedantic"})
+		pic("On")
+		buildoptions({"-pedantic"})
 		linkoptions({})
 		warnings("Extra")
 		disablewarnings({
@@ -102,7 +114,8 @@ workspace("ConvPhase")
 			"CP_PHASE_DISABLE_CERR",
 			"CP_PHASE_NOFILE"
 		})
-		buildoptions({"-fPIC"})
+		pic("On")
+		buildoptions({"-pedantic"})
 		linkoptions({})
 		warnings("Off")
 		disablewarnings({})
@@ -126,12 +139,20 @@ workspace("ConvPhase")
 
 
 
-	--[[project("SeqPhase")
-		kind("Makefile")
-		--location("build")
-		buildmessage("Building SeqPhase")
-		buildcommands({
-			"cd SeqPHASE/haxe; haxe --cpp ../cpp -D static_link SeqPhase1.hx SeqPhase2.hx",
-			"cp SeqPHASE/cpp/liboutput.a build/bin/debug/libseqphase.a"
+	project("SeqPHASE")
+		kind("StaticLib")
+		language("C++")
+		--kind("Makefile")
+		location("build")
+		buildmessage("Building SeqPHASE")
+		files("dummy.cpp")
+		postbuildcommands({
+			--"rm ../dummy.cpp",
+			--"touch file",
+			"{CHDIR} ../SeqPHASE/haxe; haxe --cpp ../../build/SeqPHASE_cpp -D static_link -D dll_export SeqPhase1.hx SeqPhase2.hx",
+			"{COPYFILE} SeqPHASE_cpp/liboutput.a %{cfg.buildtarget.relpath}",
+			--"echo %{cfg.buildtarget.relpath}"
 		})
-		]]
+		--buildinputs({"SeqPHASE/haxe/*.hx"})
+		--buildoutputs({"libseqphase.so"})
+		--linkbuildoutputs("On")
