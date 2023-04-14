@@ -1,7 +1,9 @@
 build
 session.vim
 Makefile
-/*.make
+*.make
+.vs
+*.sln
 
 libseqphase.a
 

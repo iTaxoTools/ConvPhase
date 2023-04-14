@@ -20,7 +20,7 @@ static struct PyModuleDef convPhaseModule{
 	NULL
 };
 
-PyMODINIT_FUNC PyInit_libconvphase(){
+PyMODINIT_FUNC PyInit_convphase(){
 	initHxcpp();
 	return PyModule_Create(&convPhaseModule);
 }

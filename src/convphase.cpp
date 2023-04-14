@@ -168,6 +168,7 @@ void deleteArgArray(char** argArr, int count){
 		delete[] argArr[i];
 	delete[] argArr;
 }
+#ifndef CP_PHASE_NOFILE
 void setHxcppArgs(int argc, char** argv){
 	oldArgc = _hxcpp_argc;
 	oldArgv = _hxcpp_argv;
@@ -178,6 +179,7 @@ void restoreHxcppArgs(){
 	_hxcpp_argc = oldArgc;
 	_hxcpp_argv = oldArgv;
 }
+#endif
 std::string readFile(char const* filename){
 	FILE* file = fopen(filename, "r");
 	assert(file);

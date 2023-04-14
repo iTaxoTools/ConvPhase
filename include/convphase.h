@@ -1,6 +1,12 @@
 #ifndef CONVPHASE_H
 #define CONVPHASE_H
 
+#ifdef _MSC_VER
+#define CONVPHASE_API __declspec(dllexport)
+#else
+#define CONVPHASE_API extern "C"
+#endif
+
 #include "phase.h"
 
 #include <vector>
@@ -15,13 +21,13 @@ struct SeqPhaseStep1Result{
 void initHxcpp(); //Must be called before seqPhaseStep1 and seqPhaseStep2
 
 #ifdef CP_PHASE_NOFILE
-SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2 = "", std::string str3 = "");
-PhaseOutput phase(PhaseInput input, std::vector<char const*> options = std::vector<char const*>{});
-std::string seqPhaseStep2(
+CONVPHASE_API SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2 = "", std::string str3 = "");
+CONVPHASE_API PhaseOutput phase(PhaseInput input, std::vector<char const*> options = std::vector<char const*>{});
+CONVPHASE_API std::string seqPhaseStep2(
 	std::string phaseFile, std::string constFile = "",
 	bool reduce = false, bool sort = false
 );
-std::string convPhase(
+CONVPHASE_API std::string convPhase(
 	std::string input, std::vector<char const*> options = std::vector<char const*>{},
 	bool reduce = false, bool sort = false
 );
