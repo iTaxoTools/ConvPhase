@@ -1,5 +1,4 @@
 #include "convphase.h"
-#include "hxcpp_symbols.h"
 
 #include "SeqPhase1.h"
 #include "SeqPhase1Result.h"
@@ -10,11 +9,6 @@
 #include <sstream>
 #include <cassert>
 
-//extern "C" void hxcpp_set_top_of_stack();
-//extern "C" char const* hxRunLibrary();
-int oldArgc;
-char** oldArgv;
-
 void initHxcpp(){
 	HX_TOP_OF_STACK
 	hx::Boot();
@@ -24,7 +18,6 @@ void initHxcpp(){
 	//hxRunLibrary();
 }
 
-#ifdef CP_PHASE_NOFILE
 SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2, std::string str3){
 	SeqPhase1Result result = SeqPhase1_obj::doIt(
 		String::create(str1.c_str(), str1.size()),
@@ -97,63 +90,6 @@ std::string convPhase(std::string input, std::vector<char const*> options, bool 
 
 	return step2;
 }
-#else
-void seqPhaseStep1Main(char const* file1, char const* file2, char const* file3){
-	std::vector<char const*> args{"", "-1", file1};
-	if(file2){
-		args.push_back("-2");
-		args.push_back(file2);
-	}
-	if(file3){
-		args.push_back("-3");
-		args.push_back(file3);
-	}
-	int argc = args.size();
-	char** argv = createArgArray(args);
-
-	setHxcppArgs(argc, argv);
-	SeqPhase1_obj::main();
-	restoreHxcppArgs();
-
-	deleteArgArray(argv, args.size());
-}
-int phase(char const* inputFile, char const* outputFile, std::vector<char const*> options){
-	options.insert(options.begin(), "");
-	options.push_back(inputFile);
-	options.push_back(outputFile);
-	int argc = options.size();
-	char** argv = createArgArray(options);
-
-	int ret = phase(argc, argv);
-
-	deleteArgArray(argv, options.size());
-	return ret;
-}
-void seqPhaseStep2Main(char const* phaseFile, char const* constFile){
-	std::vector<char const*> args{"", "-i", phaseFile, "-c", constFile};
-	int argc = args.size();
-	char** argv = createArgArray(args);
-
-	setHxcppArgs(argc, argv);
-	SeqPhase2_obj::main();
-	restoreHxcppArgs();
-
-	deleteArgArray(argv, args.size());
-	_hxcpp_argc = oldArgc;
-	_hxcpp_argv = oldArgv;
-}
-int convPhase(char const* inputFile, std::vector<char const*> options){
-	initHxcpp();
-
-	seqPhaseStep1Main(inputFile);
-
-	phase("phase.inp", "phase.out", options);
-
-	seqPhaseStep2Main();
-
-	return 0;
-}
-#endif
 
 char** createArgArray(std::vector<char const*> args){
 	char** argArr = new char*[args.size()];
@@ -167,30 +103,4 @@ void deleteArgArray(char** argArr, int count){
 	for(int i = 0; i < count; ++i)
 		delete[] argArr[i];
 	delete[] argArr;
-}
-#ifndef CP_PHASE_NOFILE
-void setHxcppArgs(int argc, char** argv){
-	oldArgc = _hxcpp_argc;
-	oldArgv = _hxcpp_argv;
-	_hxcpp_argc = argc;
-	_hxcpp_argv = argv;
-}
-void restoreHxcppArgs(){
-	_hxcpp_argc = oldArgc;
-	_hxcpp_argv = oldArgv;
-}
-#endif
-std::string readFile(char const* filename){
-	FILE* file = fopen(filename, "r");
-	assert(file);
-	fseek(file, 0, SEEK_END);
-	long len = ftell(file);
-	rewind(file);
-
-	char* str = new char[len+1];
-	fread(str, 1, len, file);
-	str[len] = 0;
-
-	fclose(file);
-	return str;
 }
