@@ -1,5 +1,5 @@
 workspace("ConvPhase")
-	configurations({"release", "debug"})
+	configurations({"debug", "release"})
 	newoption({
 		trigger = "kind",
 		description = "Kind of binary when building",
@@ -34,6 +34,20 @@ workspace("ConvPhase")
 		trigger = "pythonInclude",
 		description = "Python include path"
 	})
+	newoption({
+		trigger = "arch",
+		description = "Target architecture",
+		default = "x86_64",
+		allowed = {
+			{"x86", "x86/x32, 32 bit architecture"},
+			{"x86_64", "x86_64/x64, 64 bit architecture"},
+		}
+	})
+	newoption({
+		trigger = "pythonVersion",
+		description = "Python version to link against",
+		default = "3.10"
+	})
 
 
 
@@ -48,17 +62,12 @@ workspace("ConvPhase")
 		filter("options:*")
 		language("C++")
 		cppdialect("C++17")
-		architecture("x64")
+		architecture(_OPTIONS["arch"])
 
 		files({"src/*.cpp"})
 		includedirs({
 			"include",
-			--"SeqPHASE/cpp/include",
 			"build/SeqPHASE_cpp/include",
-			--"/home/digitaldragon/.local/share/haxe/lib/hxcpp/4,2,1/include",
-			--"/usr/include/python*",
-			-- "C:/Program Files/Haxe/haxe/lib/hxcpp/4,2,1/include",
-			--"C:/Program Files/Python311/include",
 		})
 		if _OPTIONS["haxeInclude"] then
 			includedirs({_OPTIONS["haxeInclude"]})
@@ -68,26 +77,26 @@ workspace("ConvPhase")
 			print("Warning: No haxe include path set, consider setting it manually with --haxeInclude=<PATH>")
 		end
 		if _OPTIONS["pythonInclude"] then
+			print(_OPTIONS["pythonInclude"])
 			includedirs({_OPTIONS["pythonInclude"]})
 		end
 			
-		--print(_OPTIONS["haxeInclude"])
-		libdirs({"thirdparty/python"})
+		--libdirs({"thirdparty/python"})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
 		targetname("convphase")
 		links({
-			"SeqPHASE",
-			--"seqphase:shared",
-			--"seqphase:static",
 			"phase",
-			"python3"
+			"SeqPHASE",
 		})
+		filter({"system:windows"})
+			links("python3")
+		filter({"not system:windows"})
+			links("python" .. _OPTIONS["pythonVersion"])
+		filter({})
 		defines({
 			"CP_PHASE_LIB",
 			"CP_PHASE_NOFILE",
-			"HXCPP_M64",
-			"HX_WINDOWS",
 			"HXCPP_API_LEVEL=400",
 			-- "HXCPP_VISIT_ALLOCS",
 			-- "HXCPP_DLL_EXPORT",
@@ -96,19 +105,28 @@ workspace("ConvPhase")
 			-- "_ALLOW_MSC_VER_MISMATCH",
 			-- "_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH",
 		})
+		filter("system:windows")
+			defines({"HX_WINDOWS"})
+		filter({})
+		if _OPTIONS["arch"] == "x86" then
+			defines("HXCPP_M32")
+		elseif _OPTIONS["arch"] == "x86_64" then
+			defines("HXCPP_M64")
+		end
 		pic("On")
 		--buildoptions({"-pedantic"})
 		linkoptions({})
 		warnings("Extra")
-		--[[disablewarnings({
-			"unused-parameter",
-			"reorder",             --warnings caused by hxcpp
-			"deprecated-copy",
-			"invalid-offsetof",
-			"sign-compare",
-			"unknown-pragmas"
-		})
-		]]
+		filter({"not system:windows"})
+			disablewarnings({
+				"unused-parameter",
+				"reorder",             --warnings caused by hxcpp
+				"deprecated-copy",
+				"invalid-offsetof",
+				"sign-compare",
+				"unknown-pragmas"
+			})
+		filter({})
 		filter({"options:noPython or options:fileComm"})
 			removefiles({"src/python_wrapper.cpp"})
 			removelinks({"python3"})
@@ -131,7 +149,7 @@ workspace("ConvPhase")
 		kind("SharedLib")
 		language("C++")
 		cppdialect("C++14")
-		architecture("x64")
+		architecture(_OPTIONS["arch"])
 
 		files({"phase/src/phase*/*.c", "phase/src/phase*/*.cpp"})
 		includedirs({"phase/src/phase*", "include"})
@@ -169,21 +187,37 @@ workspace("ConvPhase")
 
 
 	project("SeqPHASE")
-		kind("SharedLib")
+		kind("StaticLib")
 		language("C++")
-		architecture("x64")
-		--kind("Makefile")
+		architecture(_OPTIONS["arch"])
 		location("build")
 		buildmessage("Building SeqPHASE")
 		files("dummy.cpp")
+
+		haxeBuildCmd = {
+			"{CHDIR} ../SeqPHASE/haxe &&",
+			"haxe --cpp ../../build/SeqPHASE_cpp",
+			"-D static_link",
+			"-D ABI=-MD",
+			"-D HAXE_OUTPUT_FILE=%{cfg.buildtarget.basename}",
+			"SeqPhase1.hx",
+			"SeqPhase2.hx",
+		}
+		if _OPTIONS["arch"] == "x86" then
+			table.insert(haxeBuildCmd, "-D HXCPP_M32")
+		elseif _OPTIONS["arch"] == "x86_64" then
+			table.insert(haxeBuildCmd, "-D HXCPP_M64")
+		end
+
 		postbuildcommands({
-			"{CHDIR} ../SeqPHASE/haxe && haxe --cpp ../../build/SeqPHASE_cpp -D static_link -D dll_export -D HXCPP_M64 -D ABI=-MD -D HAXE_OUTPUT_FILE=%{cfg.buildtarget.basename} SeqPhase1.hx SeqPhase2.hx",
-			"{CHDIR} ../../build",
-			"{COPYFILE} SeqPHASE_cpp/%{cfg.buildtarget.basename}.lib %{cfg.buildtarget.directory}",
-			-- "{COPYFILE} SeqPHASE_cpp/%{cfg.buildtarget.basename}.dll %{cfg.buildtarget.directory}",
-			-- "{COPYFILE} SeqPHASE_cpp/obj/lib/%{cfg.buildtarget.basename}.lib %{cfg.buildtarget.directory}",
-			--"echo %{cfg.buildtarget.relpath}"
+			table.concat(haxeBuildCmd, " ")
 		})
-		--buildinputs({"SeqPHASE/haxe/*.hx"})
-		--buildoutputs({"libseqphase.so"})
-		--linkbuildoutputs("On")
+		filter("system:windows")
+			postbuildcommands({
+				"{CHDIR} ../../build",
+			})
+		filter({})
+		postbuildcommands({
+			"{COPYFILE} SeqPHASE_cpp/%{cfg.buildtarget.basename}%{cfg.buildtarget.extension} %{cfg.buildtarget.relpath}",
+		})
+
