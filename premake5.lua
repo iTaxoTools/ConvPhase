@@ -2,6 +2,7 @@ workspace("ConvPhase")
 	configurations({"debug", "release"})
 	newoption({
 		trigger = "kind",
+		category = "Custom",
 		description = "Kind of binary when building",
 		default = "shared",
 		allowed = {
@@ -12,18 +13,22 @@ workspace("ConvPhase")
 	})
 	newoption({
 		trigger = "nopython",
+		category = "Custom",
 		description = "Disable Python bindings"
 	})
 	newoption({
 		trigger = "haxeinclude",
+		category = "Custom",
 		description = "Haxe include path"
 	})
 	newoption({
 		trigger = "pythoninclude",
+		category = "Custom",
 		description = "Python include path"
 	})
 	newoption({
 		trigger = "arch",
+		category = "Custom",
 		description = "Target architecture",
 		default = "x86_64",
 		allowed = {
@@ -33,6 +38,7 @@ workspace("ConvPhase")
 	})
 	newoption({
 		trigger = "pythonVersion",
+		category = "Custom",
 		description = "Python version to link against",
 		default = "3.10"
 	})
