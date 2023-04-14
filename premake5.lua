@@ -7,31 +7,31 @@ workspace("ConvPhase")
 		allowed = {
 			{"exe", "Executable"},
 			{"static", "Static library"},
-			{"shared", "Shared library"}
+			{"shared", "Shared library"},
 		}
 	})
 	newoption({
-		trigger = "fileComm",
+		trigger = "filecomm",
 		description = "Communication with files"
 	})
 	newoption({
-		trigger = "phaseCout",
+		trigger = "phasecout",
 		description = "Enable cout of phase"
 	})
 	newoption({
-		trigger = "phaseCerr",
+		trigger = "phasecerr",
 		description = "Enable cerr of phase"
 	})
 	newoption({
-		trigger = "noPython",
+		trigger = "nopython",
 		description = "Disable Python bindings"
 	})
 	newoption({
-		trigger = "haxeInclude",
+		trigger = "haxeinclude",
 		description = "Haxe include path"
 	})
 	newoption({
-		trigger = "pythonInclude",
+		trigger = "pythoninclude",
 		description = "Python include path"
 	})
 	newoption({
@@ -77,7 +77,6 @@ workspace("ConvPhase")
 			print("Warning: No haxe include path set, consider setting it manually with --haxeInclude=<PATH>")
 		end
 		if _OPTIONS["pythonInclude"] then
-			print(_OPTIONS["pythonInclude"])
 			includedirs({_OPTIONS["pythonInclude"]})
 		end
 			
