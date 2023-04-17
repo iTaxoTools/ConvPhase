@@ -22,7 +22,7 @@ workspace("ConvPhase")
 		description = "Haxe include path"
 	})
 	newoption({
-		trigger = "pythoninclude",
+		trigger = "pythonpath",
 		category = "Custom",
 		description = "Python include path"
 	})
@@ -37,9 +37,9 @@ workspace("ConvPhase")
 		}
 	})
 	newoption({
-		trigger = "pythonVersion",
+		trigger = "pythonversion",
 		category = "Custom",
-		description = "Python version to link against",
+		description = "Python version to link against for non-Windows systems",
 		default = "3.10"
 	})
 
@@ -62,6 +62,9 @@ workspace("ConvPhase")
 			"include",
 			"build/seqphase_cpp/include",
 		})
+		filter({"system:not windows"})
+			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
+		filter({})
 		if _OPTIONS["haxeInclude"] then
 			includedirs({_OPTIONS["haxeInclude"]})
 		elseif os.getenv("HAXEPATH") then
@@ -69,8 +72,11 @@ workspace("ConvPhase")
 		else
 			print("Warning: No haxe include path set, consider setting it manually with --haxeInclude=<PATH>")
 		end
-		if _OPTIONS["pythonInclude"] then
-			includedirs({_OPTIONS["pythonInclude"]})
+		if _OPTIONS["pythonpath"] then
+			includedirs({_OPTIONS["pythonpath"] .. "/include"})
+			filter({"system:windows"})
+				libdirs(_OPTIONS["pythonpath"] .. "/libs")
+			filter({})
 		end
 			
 		--libdirs({"thirdparty/python"})
@@ -84,9 +90,9 @@ workspace("ConvPhase")
 			"phase",
 			"seqphase",
 		})
-		filter({"system:windows"})
+		filter({"not options:nopython", "system:windows"})
 			links("python3")
-		filter({"not system:windows"})
+		filter({"not options:nopython", "system:not windows"})
 			links("python" .. _OPTIONS["pythonVersion"])
 		filter({})
 		defines({
@@ -122,7 +128,6 @@ workspace("ConvPhase")
 			})
 		filter({"options:noPython"})
 			removefiles({"src/python_wrapper.cpp"})
-			removelinks({"python3"})
 
 		filter({"configurations:debug"})
 			defines({"DEBUG"})
