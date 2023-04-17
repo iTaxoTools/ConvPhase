@@ -45,8 +45,7 @@ workspace("ConvPhase")
 
 
 
-	project("ConvPhase")
-		--dependson({"SeqPHASE"})
+	project("convphase")
 		filter("options:kind=exe")
 			kind("ConsoleApp")
 		filter("options:kind=static")
@@ -61,7 +60,7 @@ workspace("ConvPhase")
 		files({"src/*.cpp"})
 		includedirs({
 			"include",
-			"build/SeqPHASE_cpp/include",
+			"build/seqphase_cpp/include",
 		})
 		if _OPTIONS["haxeInclude"] then
 			includedirs({_OPTIONS["haxeInclude"]})
@@ -77,10 +76,13 @@ workspace("ConvPhase")
 		--libdirs({"thirdparty/python"})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
-		targetname("convphase")
+		--targetname("convphase")
+		filter({"not options:nopython"})
+			targetprefix("")
+		filter({})
 		links({
 			"phase",
-			"SeqPHASE",
+			"seqphase",
 		})
 		filter({"system:windows"})
 			links("python3")
@@ -171,17 +173,17 @@ workspace("ConvPhase")
 
 
 
-	project("SeqPHASE")
+	project("seqphase")
 		kind("StaticLib")
 		language("C++")
 		architecture(_OPTIONS["arch"])
 		location("build")
 		buildmessage("Building SeqPHASE")
-		files("dummy.cpp")
+		files("src/dummy.cpp")
 
 		haxeBuildCmd = {
 			"{CHDIR} ../SeqPHASE/haxe &&",
-			"haxe --cpp ../../build/SeqPHASE_cpp",
+			"haxe --cpp ../../build/seqphase_cpp",
 			"-D static_link",
 			"-D ABI=-MD",
 			"-D HAXE_OUTPUT_FILE=%{cfg.buildtarget.basename}",
@@ -203,6 +205,6 @@ workspace("ConvPhase")
 			})
 		filter({})
 		postbuildcommands({
-			"{COPYFILE} SeqPHASE_cpp/%{cfg.buildtarget.basename}%{cfg.buildtarget.extension} %{cfg.buildtarget.relpath}",
+			"{COPYFILE} seqphase_cpp/%{cfg.buildtarget.basename}%{cfg.buildtarget.extension} %{cfg.buildtarget.relpath}",
 		})
 
