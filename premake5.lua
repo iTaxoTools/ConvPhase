@@ -107,12 +107,11 @@ workspace("ConvPhase")
 		})
 		filter("system:windows")
 			defines({"HX_WINDOWS"})
-		filter({})
-		if _OPTIONS["arch"] == "x86" then
+		filter("options:arch=x86")
 			defines("HXCPP_M32")
-		elseif _OPTIONS["arch"] == "x86_64" then
+		filter("options:arch=x86_64")
 			defines("HXCPP_M64")
-		end
+		filter({})
 		pic("On")
 		linkoptions({})
 		warnings("Extra")

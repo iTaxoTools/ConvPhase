@@ -54,9 +54,9 @@ PhaseOutput phase(PhaseInput input, std::vector<char const*> options){
 	deleteArgArray(argv, options.size());
 	return data.getOutput();
 }
-std::string seqPhaseStep2(std::string phaseFile, std::string constFile, bool reduce, bool sort){
+std::string seqPhaseStep2(std::string phaseOut, std::string constFile, bool reduce, bool sort){
 	Individuals result = SeqPhase2_obj::parse(
-		String::create(phaseFile.c_str(), phaseFile.size()),
+		String::create(phaseOut.c_str(), phaseOut.size()),
 		String::create(constFile.c_str(), constFile.size())
 	);
 	String fileContent = result->getFasta(reduce, sort);

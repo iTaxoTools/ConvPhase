@@ -3,15 +3,24 @@
 #include <string>
 #include <iostream>
 
+struct SeqPhaseStep1Result{
+	std::string inpData;
+	std::string knownData;
+	std::string constData;
+};
 struct PhaseInput{
 	PhaseInput() = default;
 	PhaseInput(std::string input):
 		input{input}{
 	}
+	PhaseInput(SeqPhaseStep1Result step1Result):
+		input{step1Result.inpData},
+		known{step1Result.knownData}{
+	}
 	PhaseInput(std::string input, std::string known):
 		input{input},
 		known{known}{
-		}
+	}
 	PhaseInput(std::string input, std::string known, std::string init, std::string delta):
 		input{input},
 		known{known},

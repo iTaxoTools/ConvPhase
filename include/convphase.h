@@ -12,18 +12,12 @@
 #include <vector>
 #include <string>
 
-struct SeqPhaseStep1Result{
-	std::string inpData;
-	std::string knownData;
-	std::string constData;
-};
-
 void initHxcpp(); //Must be called before seqPhaseStep1 and seqPhaseStep2
 
 CONVPHASE_API SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2 = "", std::string str3 = "");
 CONVPHASE_API PhaseOutput phase(PhaseInput input, std::vector<char const*> options = std::vector<char const*>{});
 CONVPHASE_API std::string seqPhaseStep2(
-	std::string phaseFile, std::string constFile = "",
+	std::string phaseOut, std::string constFile = "",
 	bool reduce = false, bool sort = false
 );
 CONVPHASE_API std::string convPhase(
