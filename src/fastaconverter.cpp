@@ -31,12 +31,17 @@ FastaConverter::operator std::string(){
 }
 
 inline bool fastaCheck(std::string in, std::string sep = ""){
-	std::string seqNameRe = "(.*)";
+	std::string seqNameRe = ".*";
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
 
-	std::string validSubRe{">" + seqNameRe + "\n([" VALID_CHARS "]+\n?)+"};
-	std::regex validRe{validSubRe + "(\n" + validSubRe + ")*"};
+	std::string seqIdRe{">" + seqNameRe};
+	std::string oneLineSeqDataRe{"[" VALID_CHARS "]+"};
+	std::string seqDataRe = oneLineSeqDataRe + "(\n" + oneLineSeqDataRe + ")*";
+	std::string seqRe = seqIdRe + "\n" + seqDataRe + "\n*";
+	std::string re = seqRe + "(\n" + seqRe + ")*";
+
+	std::regex validRe{re};
 
 	return std::regex_match(in, validRe);
 }
