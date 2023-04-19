@@ -65,7 +65,9 @@ std::string seqPhaseStep2(std::string phaseOut, std::string constFile, bool redu
 FastaConverter convPhase(FastaConverter input, std::vector<char const*> options, bool reduce, bool sort){
 	initHxcpp();
 
-	SeqPhaseStep1Result step1 = seqPhaseStep1(input);
+	SeqPhaseStep1Result step1 = seqPhaseStep1(
+			(input.format == FCF_MOID_FASTA || input.format == FCF_HAPVIEW_FASTA) ? input.toString() : input.getFasta()
+	);
 	//printf("%s\n", step1.inpData.c_str());
 
 	PhaseOutput phaseResult = phase(PhaseInput{step1.inpData}, options);
