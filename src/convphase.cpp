@@ -62,7 +62,7 @@ std::string seqPhaseStep2(std::string phaseOut, std::string constFile, bool redu
 	String fileContent = result->getFasta(reduce, sort);
 	return std::string(fileContent.c_str());
 }
-std::string convPhase(std::string input, std::vector<char const*> options, bool reduce, bool sort){
+FastaConverter convPhase(FastaConverter input, std::vector<char const*> options, bool reduce, bool sort){
 	initHxcpp();
 
 	SeqPhaseStep1Result step1 = seqPhaseStep1(input);
@@ -85,7 +85,16 @@ std::string convPhase(std::string input, std::vector<char const*> options, bool 
 	//printf("cout: \n%s\n\n\n", phaseResult.cout.c_str());
 	//printf("cerr: \n%s\n\n\n", phaseResult.cerr.c_str());
 
-	std::string step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
+	FastaConverter step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
+	for(Sequence& s: step2.sequences){
+		if(s.taxon.size()){
+			s.allele = s.taxon.back();
+			s.taxon.pop_back();
+		} else{
+			s.allele = s.seqid.back();
+			s.seqid.pop_back();
+		}
+	}
 	//printf("%s\n", step2.c_str());
 
 	return step2;
