@@ -5,6 +5,13 @@
 #define VALID_CHARS "ACGTUIRYKMSWBDHVN-"
 
 FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
+	std::string crlf{"\r\n"};
+	if(in.find(crlf) != std::string::npos){
+		fprintf(stderr, "Warning: data is in CRLF format\n");
+		std::regex re{crlf};
+		in = std::regex_replace(in, re, "\n");
+	}
+	
 	switch(f){
 		case FCF_NONE:
 			parse(in);
@@ -35,6 +42,7 @@ inline bool fastaCheck(std::string in, std::string sep = ""){
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
 
+	std::string newLine = "\r\n";
 	std::string seqIdRe{">" + seqNameRe};
 	std::string oneLineSeqDataRe{"[" VALID_CHARS "]+"};
 	std::string seqDataRe = oneLineSeqDataRe + "(\n" + oneLineSeqDataRe + ")*";
@@ -46,7 +54,6 @@ inline bool fastaCheck(std::string in, std::string sep = ""){
 	return std::regex_match(in, validRe);
 }
 FastaConverter& FastaConverter::parse(std::string in){
-	//printf("parse()\n");
 	if(fastaCheck(in)){
 		if(fastaCheck(in, "\\|")){
 			return parseMoIDFasta(in);
@@ -73,7 +80,6 @@ inline std::string parseFastaSequence(std::string in){
 	return seq;
 }
 FastaConverter& FastaConverter::parseFasta(std::string in, std::string sep){
-	//printf("parseFasta(%s)\n", sep.c_str());
 	std::string seqNameRe = "(.*)";
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
@@ -99,13 +105,11 @@ FastaConverter& FastaConverter::parseFasta(std::string in, std::string sep){
 	return *this;
 }
 FastaConverter& FastaConverter::parseMoIDFasta(std::string in){
-	//printf("parseMoIDFasta()\n");
 	if(!format)
 		format = FCF_MOID_FASTA;
 	return parseFasta(in, "\\|");
 }
 FastaConverter& FastaConverter::parseHapViewFasta(std::string in){
-	//printf("parseHapViewFasta()\n");
 	if(!format)
 		format = FCF_HAPVIEW_FASTA;
 	return parseFasta(in, "\\.");
@@ -135,7 +139,6 @@ std::string FastaConverter::toString(){
 }
 std::string FastaConverter::getFasta(std::string sep){
 	std::string out;
-	//printf("getFasta(%s)\n", sep.c_str());
 
 	for(Sequence const& seq: sequences){
 		out += ">";
