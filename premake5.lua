@@ -148,7 +148,7 @@ workspace("ConvPhase")
 
 
 	project("phase")
-		kind("SharedLib")
+		kind("StaticLib")
 		language("C++")
 		cppdialect("C++14")
 		architecture(_OPTIONS["arch"])
@@ -181,7 +181,6 @@ workspace("ConvPhase")
 			defines({"NDEBUG"})
 			optimize("Full")
 			--symbols("Off")
-
 
 
 	project("seqphase")
