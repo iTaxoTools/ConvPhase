@@ -25,6 +25,9 @@ FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 		case FCF_HAPVIEW_FASTA:
 			parseHapViewFasta(in);
 			break;
+		case FCF_TSV:
+			parseTsv(in);
+			break;
 		case FCF_NEXUS:
 			parseNexus(in);
 			break;
@@ -53,6 +56,11 @@ inline bool fastaCheck(std::string in, std::string sep = ""){
 
 	return std::regex_match(in, validRe);
 }
+inline bool tsvCheck(std::string in){
+	std::string reValidStr{".*\t.*\t.*\t.*"};
+	reValidStr += "(\n+" + reValidStr + ")*\n*";
+	return std::regex_match(in, std::regex{reValidStr});
+}
 FastaConverter& FastaConverter::parse(std::string in){
 	if(fastaCheck(in)){
 		if(fastaCheck(in, "\\|")){
@@ -63,6 +71,8 @@ FastaConverter& FastaConverter::parse(std::string in){
 		}
 		return parseFasta(in);
 	}
+	if(tsvCheck(in))
+		return parseTsv(in);
 
 	fprintf(stderr, "Error: Format not recognized for parsing\n");
 	return *this;
@@ -114,6 +124,26 @@ FastaConverter& FastaConverter::parseHapViewFasta(std::string in){
 		format = FCF_HAPVIEW_FASTA;
 	return parseFasta(in, "\\.");
 }
+FastaConverter& FastaConverter::parseTsv(std::string in){
+	if(!tsvCheck(in)){
+		fprintf(stderr, "Error: data not in tsv format with 4 values per line\n");
+		return *this;
+	}
+
+	std::regex re{"(.*)\t(.*)\t(.*)\t(.*)"};
+	std::smatch match;
+	while(std::regex_search(in, match, re)){
+		Sequence s;
+		s.seqid    = match[1];
+		s.taxon    = match[2];
+		s.locality = match[3];
+		s.data     = match[4];
+		sequences.push_back(s);
+		in = match.suffix();
+	}
+
+	return *this;
+}
 FastaConverter& FastaConverter::parseNexus(std::string in){
 	if(!format)
 		format = FCF_NEXUS;
@@ -164,6 +194,22 @@ std::string FastaConverter::getMoIDFasta(){
 std::string FastaConverter::getHapViewFasta(){
 	return getFasta(".");
 }
+std::string FastaConverter::getTsv(){
+	std::string out;
+	for(Sequence const& s: sequences){
+		out += s.seqid;
+		out += "\t";
+		out += s.allele;
+		out += "\t";
+		out += s.taxon;
+		out += "\t";
+		out += s.locality;
+		out += "\t";
+		out += s.data;
+		out += "\n";
+	}
+	return out;
+}
 std::string FastaConverter::getNexus(){
 	std::string out;
 	return out;
@@ -173,4 +219,10 @@ std::string FastaConverter::getNexus(){
 void FastaConverter::clear(){
 	sequences.clear();
 	format = FCF_NONE;
+}
+bool FastaConverter::allHaveTaxon(){
+	for(Sequence const& s: sequences)
+		if(!s.taxon.size())
+			return false;
+	return true;
 }

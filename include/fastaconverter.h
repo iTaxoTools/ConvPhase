@@ -17,6 +17,7 @@ enum FastaConverterFormat{
 	FCF_FASTA,
 	FCF_MOID_FASTA,
 	FCF_HAPVIEW_FASTA,
+	FCF_TSV,
 	FCF_NEXUS,
 	FCF_NUM
 };
@@ -33,15 +34,18 @@ public:
 	                                                                  // for regular expression
 	FastaConverter& parseMoIDFasta(std::string in);
 	FastaConverter& parseHapViewFasta(std::string in);
+	FastaConverter& parseTsv(std::string in);
 	FastaConverter& parseNexus(std::string in);
 
 	std::string toString();
 	std::string getFasta(std::string sep = "");
 	std::string getMoIDFasta();
 	std::string getHapViewFasta();
+	std::string getTsv();
 	std::string getNexus();
 
 	void clear();
+	bool allHaveTaxon();
 
 	std::vector<Sequence> sequences;
 	FastaConverterFormat format = FCF_NONE;

@@ -66,7 +66,7 @@ FastaConverter convPhase(FastaConverter input, std::vector<char const*> options,
 	initHxcpp();
 
 	SeqPhaseStep1Result step1 = seqPhaseStep1(
-			(input.format == FCF_MOID_FASTA || input.format == FCF_HAPVIEW_FASTA) ? input.toString() : input.getFasta()
+			(input.allHaveTaxon()) ? input.getMoIDFasta() : input.getFasta()
 	);
 	//printf("%s\n", step1.inpData.c_str());
 
