@@ -17,14 +17,19 @@ workspace("ConvPhase")
 		description = "Disable Python bindings"
 	})
 	newoption({
-		trigger = "haxeinclude",
+		trigger = "includedirs",
 		category = "Custom",
-		description = "Haxe include path"
+		description = "List of include directories separated by semicolons"
 	})
 	newoption({
-		trigger = "pythonpath",
+		trigger = "libdirs",
 		category = "Custom",
-		description = "Python include path"
+		description = "List of library directories separated by semicolons"
+	})
+	newoption({
+		trigger = "target",
+		category = "Custom",
+		description = "The produced library is copied here"
 	})
 	newoption({
 		trigger = "arch",
@@ -58,27 +63,24 @@ workspace("ConvPhase")
 		architecture(_OPTIONS["arch"])
 
 		files({"src/*.cpp"})
-		includedirs({
+
+		includedirs {
 			"include",
 			"build/seqphase_cpp/include",
-		})
-		filter({"system:not windows"})
-			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
-		filter({})
-		if _OPTIONS["haxeInclude"] then
-			includedirs({_OPTIONS["haxeInclude"]})
-		elseif os.getenv("HAXEPATH") then
-			includedirs({os.getenv("HAXEPATH") .. "/lib/hxcpp/4,2,1/include"})
-		else
-			print("Warning: No haxe include path set, consider setting it manually with --haxeInclude=<PATH>")
+		}
+
+		if _OPTIONS["includedirs"] then
+	    for path in string.gmatch(_OPTIONS["includedirs"], "[^;]+") do
+	      includedirs { path }
+	    end
 		end
-		if _OPTIONS["pythonpath"] then
-			includedirs({_OPTIONS["pythonpath"] .. "/include"})
-			filter({"system:windows"})
-				libdirs(_OPTIONS["pythonpath"] .. "/libs")
-			filter({})
+
+		if _OPTIONS["libdirs"] then
+	    for path in string.gmatch(_OPTIONS["libdirs"], "[^;]+") do
+	      libdirs { path }
+	    end
 		end
-			
+
 		--libdirs({"thirdparty/python"})
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
@@ -138,6 +140,11 @@ workspace("ConvPhase")
 			optimize("Full")
 			--symbols("Off")
 
+		if _OPTIONS["target"] then
+			postbuildcommands {
+				"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
+			}
+		end
 
 
 	project("phase")
@@ -211,4 +218,3 @@ workspace("ConvPhase")
 		postbuildcommands({
 			"{COPYFILE} seqphase_cpp/%{cfg.buildtarget.basename}%{cfg.buildtarget.extension} %{cfg.buildtarget.relpath}",
 		})
-
