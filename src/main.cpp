@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 
 	//FastaConverter result = convPhase(FastaConverter{readFile(inputFile)}, options);
 	//printf("%s\n", result.toString().c_str());
-	std::string result = convPhase(FastaConverter{readFile(inputFile)}, options);
+	std::string result = convPhase(readFile(inputFile), options);
 	printf("%s\n", result.c_str());
 
 	return 0;

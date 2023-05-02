@@ -3,6 +3,13 @@
 #include <regex>
 
 #define VALID_CHARS "ACGTUIRYKMSWBDHVN-"
+#define contains(str, chars) (str.find(chars) != std::string::npos)
+
+#ifdef REGEX_FASTA_CHECK
+#define fastaCheck(...) fastaCheck1(__VA_ARGS__)
+#else
+#define fastaCheck(...) fastaCheck2(__VA_ARGS__)
+#endif
 
 FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 	if(in.find("\r\n") != std::string::npos){
@@ -43,7 +50,7 @@ FastaConverter::operator std::string(){
 	return toString();
 }
 
-inline bool fastaCheck(std::string in, std::string sep = ""){
+inline bool fastaCheck1(std::string in, std::string sep = ""){
 	std::string seqNameRe = ".*";
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
@@ -58,6 +65,41 @@ inline bool fastaCheck(std::string in, std::string sep = ""){
 	std::regex validRe{re};
 
 	return std::regex_match(in, validRe);
+}
+inline bool fastaCheck2(std::string in, std::string sep = ""){
+	char sepChar = 0;
+	if(sep.size()){
+		if(sep[0] == '\\' && sep.size() == 2)
+			sepChar = sep[1];
+		else
+			sepChar = sep[0];
+	}
+	std::string ws{" \t\r\n"};
+	std::string validChars{VALID_CHARS};
+	for(size_t i = 0; i < in.size(); ++i){
+		if(contains(ws, in[i]))
+			continue;
+		if(in[i] != '>')
+			return false;
+		++i;
+		bool sepExist = false;
+		if(!sepChar)
+			sepExist = true;
+		for(; i < in.size() && in[i] != '\n'; ++i)
+			if(in[i] == sepChar)
+				sepExist = true;
+		if(!sepExist)
+			return false;
+		++i;
+		for(; i < in.size() && in[i] != '>'; ++i){
+			if(in[i] == '\n')
+				continue;
+			if(!contains(validChars, in[i]))
+				return false;
+		}
+		--i;
+	}
+	return true;
 }
 inline bool tsvCheck(std::string in){
 	std::string reValidStr{".*\t.*\t.*\t.*"};
