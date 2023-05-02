@@ -15,7 +15,7 @@ def run():
     parser.add_argument('input', type=str, help='Path to input file')
     parser.add_argument('-o', '--output', type=str, help='Path to output file')
 
-    parser.add_argument('-n', '--number-of-iterations', type=int, default=100, help='Number of MCMC iterations ')
+    parser.add_argument('-n', '--number-of-iterations', type=int, default=100, help='Number of MCMC iterations')
     parser.add_argument('-t', '--thinning-interval', type=int, default=1, help='Thinning interval')
     parser.add_argument('-b', '--burn-in', type=int, default=100, help='Burn in')
 
