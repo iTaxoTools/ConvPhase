@@ -43,6 +43,8 @@ int main(int argc, char* argv[]){
 	////printf("%s\n\n\n", phaseOut.output.c_str());
 	//std::string result = seqPhaseStep2(phaseOut.output, step1.constData);
 
+	//FastaConverter result = convPhase(FastaConverter{readFile(inputFile)}, options);
+	//printf("%s\n", result.toString().c_str());
 	std::string result = convPhase(readFile(inputFile), options);
 	printf("%s\n", result.c_str());
 

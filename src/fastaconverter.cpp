@@ -3,8 +3,25 @@
 #include <regex>
 
 #define VALID_CHARS "ACGTUIRYKMSWBDHVN-"
+#define contains(str, chars) (str.find(chars) != std::string::npos)
+
+#ifdef REGEX_FASTA_CHECK
+#define fastaCheck(...) fastaCheck1(__VA_ARGS__)
+#else
+#define fastaCheck(...) fastaCheck2(__VA_ARGS__)
+#endif
 
 FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
+	if(in.find("\r\n") != std::string::npos){
+		fprintf(stderr, "Warning: data is in CRLF format\n");
+		std::regex re{"\r\n"};
+		in = std::regex_replace(in, re, "\n");
+	} else if(in.find("\r") != std::string::npos){
+		fprintf(stderr, "Warning: data is in CR format\n");
+		std::regex re{"\r"};
+		in = std::regex_replace(in, re, "\n");
+	}
+	
 	switch(f){
 		case FCF_NONE:
 			parse(in);
@@ -18,6 +35,9 @@ FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 		case FCF_HAPVIEW_FASTA:
 			parseHapViewFasta(in);
 			break;
+		case FCF_TSV:
+			parseTsv(in);
+			break;
 		case FCF_NEXUS:
 			parseNexus(in);
 			break;
@@ -30,11 +50,12 @@ FastaConverter::operator std::string(){
 	return toString();
 }
 
-inline bool fastaCheck(std::string in, std::string sep = ""){
+inline bool fastaCheck1(std::string in, std::string sep = ""){
 	std::string seqNameRe = ".*";
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
 
+	std::string newLine = "\r\n";
 	std::string seqIdRe{">" + seqNameRe};
 	std::string oneLineSeqDataRe{"[" VALID_CHARS "]+"};
 	std::string seqDataRe = oneLineSeqDataRe + "(\n" + oneLineSeqDataRe + ")*";
@@ -45,8 +66,47 @@ inline bool fastaCheck(std::string in, std::string sep = ""){
 
 	return std::regex_match(in, validRe);
 }
+inline bool fastaCheck2(std::string in, std::string sep = ""){
+	char sepChar = 0;
+	if(sep.size()){
+		if(sep[0] == '\\' && sep.size() == 2)
+			sepChar = sep[1];
+		else
+			sepChar = sep[0];
+	}
+	std::string ws{" \t\r\n"};
+	std::string validChars{VALID_CHARS};
+	for(size_t i = 0; i < in.size(); ++i){
+		if(contains(ws, in[i]))
+			continue;
+		if(in[i] != '>')
+			return false;
+		++i;
+		bool sepExist = false;
+		if(!sepChar)
+			sepExist = true;
+		for(; i < in.size() && in[i] != '\n'; ++i)
+			if(in[i] == sepChar)
+				sepExist = true;
+		if(!sepExist)
+			return false;
+		++i;
+		for(; i < in.size() && in[i] != '>'; ++i){
+			if(in[i] == '\n')
+				continue;
+			if(!contains(validChars, in[i]))
+				return false;
+		}
+		--i;
+	}
+	return true;
+}
+inline bool tsvCheck(std::string in){
+	std::string reValidStr{".*\t.*\t.*\t.*"};
+	reValidStr += "(\n+" + reValidStr + ")*\n*";
+	return std::regex_match(in, std::regex{reValidStr});
+}
 FastaConverter& FastaConverter::parse(std::string in){
-	//printf("parse()\n");
 	if(fastaCheck(in)){
 		if(fastaCheck(in, "\\|")){
 			return parseMoIDFasta(in);
@@ -56,6 +116,8 @@ FastaConverter& FastaConverter::parse(std::string in){
 		}
 		return parseFasta(in);
 	}
+	if(tsvCheck(in))
+		return parseTsv(in);
 
 	fprintf(stderr, "Error: Format not recognized for parsing\n");
 	return *this;
@@ -73,7 +135,6 @@ inline std::string parseFastaSequence(std::string in){
 	return seq;
 }
 FastaConverter& FastaConverter::parseFasta(std::string in, std::string sep){
-	//printf("parseFasta(%s)\n", sep.c_str());
 	std::string seqNameRe = "(.*)";
 	if(sep.size())
 		seqNameRe += sep + seqNameRe;
@@ -99,16 +160,34 @@ FastaConverter& FastaConverter::parseFasta(std::string in, std::string sep){
 	return *this;
 }
 FastaConverter& FastaConverter::parseMoIDFasta(std::string in){
-	//printf("parseMoIDFasta()\n");
 	if(!format)
 		format = FCF_MOID_FASTA;
 	return parseFasta(in, "\\|");
 }
 FastaConverter& FastaConverter::parseHapViewFasta(std::string in){
-	//printf("parseHapViewFasta()\n");
 	if(!format)
 		format = FCF_HAPVIEW_FASTA;
 	return parseFasta(in, "\\.");
+}
+FastaConverter& FastaConverter::parseTsv(std::string in){
+	if(!tsvCheck(in)){
+		fprintf(stderr, "Error: data not in tsv format with 4 values per line\n");
+		return *this;
+	}
+
+	std::regex re{"(.*)\t(.*)\t(.*)\t(.*)"};
+	std::smatch match;
+	while(std::regex_search(in, match, re)){
+		Sequence s;
+		s.seqid    = match[1];
+		s.taxon    = match[2];
+		s.locality = match[3];
+		s.data     = match[4];
+		sequences.push_back(s);
+		in = match.suffix();
+	}
+
+	return *this;
 }
 FastaConverter& FastaConverter::parseNexus(std::string in){
 	if(!format)
@@ -135,7 +214,6 @@ std::string FastaConverter::toString(){
 }
 std::string FastaConverter::getFasta(std::string sep){
 	std::string out;
-	//printf("getFasta(%s)\n", sep.c_str());
 
 	for(Sequence const& seq: sequences){
 		out += ">";
@@ -161,6 +239,22 @@ std::string FastaConverter::getMoIDFasta(){
 std::string FastaConverter::getHapViewFasta(){
 	return getFasta(".");
 }
+std::string FastaConverter::getTsv(){
+	std::string out;
+	for(Sequence const& s: sequences){
+		out += s.seqid;
+		out += "\t";
+		out += s.allele;
+		out += "\t";
+		out += s.taxon;
+		out += "\t";
+		out += s.locality;
+		out += "\t";
+		out += s.data;
+		out += "\n";
+	}
+	return out;
+}
 std::string FastaConverter::getNexus(){
 	std::string out;
 	return out;
@@ -170,4 +264,10 @@ std::string FastaConverter::getNexus(){
 void FastaConverter::clear(){
 	sequences.clear();
 	format = FCF_NONE;
+}
+bool FastaConverter::allHaveTaxon(){
+	for(Sequence const& s: sequences)
+		if(!s.taxon.size())
+			return false;
+	return true;
 }
