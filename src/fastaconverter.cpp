@@ -5,10 +5,13 @@
 #define VALID_CHARS "ACGTUIRYKMSWBDHVN-"
 
 FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
-	std::string crlf{"\r\n"};
-	if(in.find(crlf) != std::string::npos){
+	if(in.find("\r\n") != std::string::npos){
 		fprintf(stderr, "Warning: data is in CRLF format\n");
-		std::regex re{crlf};
+		std::regex re{"\r\n"};
+		in = std::regex_replace(in, re, "\n");
+	} else if(in.find("\r") != std::string::npos){
+		fprintf(stderr, "Warning: data is in CR format\n");
+		std::regex re{"\r"};
 		in = std::regex_replace(in, re, "\n");
 	}
 	
