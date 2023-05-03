@@ -2,6 +2,7 @@
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_namespace_packages, Command, msvc
+from setuptools.command.build_ext import build_ext as _build_ext
 from subprocess import check_call, check_output, CalledProcessError
 from distutils import sysconfig
 from pathlib import Path
@@ -207,6 +208,14 @@ class BuildConvPhase(Command):
         )
 
 
+class build_ext(_build_ext):
+    """Overrides setuptools to build convphase by default"""
+    def run(self):
+        self.reinitialize_command('build_convphase', inplace=1)
+        self.run_command('build_convphase')
+        super().run()
+
+
 setup(
     name='convphase',
     version='0.0.1',
@@ -223,6 +232,7 @@ setup(
     extras_require={},
     cmdclass={
         'build_convphase': BuildConvPhase,
+        'build_ext': build_ext,
     },
     entry_points={
         'console_scripts': [
