@@ -18,12 +18,17 @@ class BuildConvPhase(Command):
     """Custom command for building ConvPhase"""
     description = 'compile convphase using premake'
     user_options = [
-        ('build-lib=', 'b', "directory for compiled extension modules"),
+        ('build-lib=', 'b', 'directory for compiled extension modules'),
         (
             'inplace',
             'i',
-            "ignore build-lib and put compiled extensions into the source "
-            + "directory alongside your pure Python modules",
+            'ignore build-lib and put compiled extensions into the source '
+            + 'directory alongside your pure Python modules',
+        ),
+        (
+            'make',
+            'm',
+            'call premake without building',
         ),
     ]
 
@@ -37,6 +42,7 @@ class BuildConvPhase(Command):
         self.plat_name = None
         self.windows = False
         self.inplace = 0
+        self.make = 0
 
     def finalize_options(self):
         self.set_undefined_options(
@@ -53,7 +59,9 @@ class BuildConvPhase(Command):
         self.update_git_submodules()
         self.set_environ()
         self.premake()
-        self.build()
+
+        if not self.make:
+            self.build()
 
     def subprocess(self, func, arg, error, missing=None):
         if isinstance(arg, list):
