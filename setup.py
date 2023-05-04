@@ -63,7 +63,9 @@ class BuildConvPhase(Command):
             self.macosx = True
 
         self.arch = platform.machine()
-
+        if self.arch.upper() == 'AMD64':
+            self.arch = 'x86_64'
+            
         self.find_hxcpp_includes()
         self.find_python_includes()
         self.find_python_libdirs()
