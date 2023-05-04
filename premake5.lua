@@ -141,9 +141,17 @@ workspace("ConvPhase")
 			--symbols("Off")
 
 		if _OPTIONS["target"] then
-			postbuildcommands {
-				"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
-			}
+			filter({"not system:windows"})
+				postbuildcommands {
+					"{COPYFILE} %{cfg.buildtarget.relpath} " .. _OPTIONS["target"]
+				}
+			filter({})
+			filter({"system:windows"})
+				postbuildcommands {
+					"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
+				}
+			filter({})
+
 		end
 
 

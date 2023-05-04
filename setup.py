@@ -67,15 +67,17 @@ class BuildConvPhase(Command):
         if isinstance(arg, list):
             command = ' '.join(arg)
             tool = arg[0]
+            shell = False
         elif isinstance(arg, str):
             command = arg
             tool = arg.split(' ')[0]
+            shell = True
         else:
             raise Exception('Bad subprocess arguments')
 
         try:
             print(command)
-            result = func(arg)
+            result = func(arg, shell=shell)
             if func is check_output:
                 result = result.decode('utf-8')
                 print(result)
@@ -207,7 +209,7 @@ class BuildConvPhase(Command):
             command = f'{tool} /p:Configuration=Release'
         else:
             tool = 'make'
-            command = tool
+            command = f'{tool} config=release'
 
         self.subprocess(
             check_call, command,
