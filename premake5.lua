@@ -39,6 +39,7 @@ workspace("ConvPhase")
 		allowed = {
 			{"x86", "x86/x32, 32 bit architecture"},
 			{"x86_64", "x86_64/x64, 64 bit architecture"},
+			{"arm64", "arm64, 64 bit architecture"},
 		}
 	})
 	newoption({
@@ -113,6 +114,8 @@ workspace("ConvPhase")
 			defines("HXCPP_M32")
 		filter("options:arch=x86_64")
 			defines("HXCPP_M64")
+		filter("options:arch=arm64")
+			defines("HXCPP_ARM64")
 		filter({})
 		pic("On")
 		linkoptions({})
@@ -212,6 +215,8 @@ workspace("ConvPhase")
 			table.insert(haxeBuildCmd, "-D HXCPP_M32")
 		elseif _OPTIONS["arch"] == "x86_64" then
 			table.insert(haxeBuildCmd, "-D HXCPP_M64")
+		elseif _OPTIONS["arch"] == "arm64" then
+			table.insert(haxeBuildCmd, "-D HXCPP_ARM64")
 		end
 
 		postbuildcommands({

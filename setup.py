@@ -7,6 +7,7 @@ from setuptools.command.develop import develop as _develop
 from subprocess import check_call, check_output, CalledProcessError
 from distutils import sysconfig
 from pathlib import Path
+import platform
 import sys
 import os
 
@@ -38,10 +39,14 @@ class BuildConvPhase(Command):
 
         self.hxcpp_includes = []
         self.python_includes = []
-        self.python_libs = []
+        self.python_libdirs = []
+
         self.build_lib = None
         self.plat_name = None
+
+        self.arch = None
         self.windows = False
+        self.macosx = False
         self.inplace = 0
         self.make = 0
 
@@ -52,9 +57,16 @@ class BuildConvPhase(Command):
             ('plat_name', 'plat_name'),
         )
 
+        if self.plat_name.startswith('win-'):
+            self.windows = True
+        elif self.plat_name.startswith('macosx-'):
+            self.macosx = True
+
+        self.arch = platform.machine()
+
         self.find_hxcpp_includes()
         self.find_python_includes()
-        self.find_python_libs()
+        self.find_python_libdirs()
 
     def run(self):
         self.update_git_submodules()
@@ -91,12 +103,11 @@ class BuildConvPhase(Command):
 
     def set_environ(self):
         plat_name = self.plat_name
-        if plat_name.startswith('win-'):
+        if self.windows:
             print('Loading MSVC environment...')
-            plat_name = plat_name[len('win-'):]
+            plat_name = self.plat_name[len('win-'):]
             env = msvc.msvc14_get_vc_env(plat_name)
             os.environ.update(env)
-            self.windows = True
 
     def git_submodules_initialized(self):
         output = self.subprocess(
@@ -142,9 +153,13 @@ class BuildConvPhase(Command):
         if plat_includes != includes:
             self.python_includes.append(Path(plat_includes))
 
-    def find_python_libs(self):
-        libs = Path(sys.base_exec_prefix) / 'libs'
-        self.python_libs.append(libs)
+    def find_python_libdirs(self):
+        if self.windows:
+            libdir = Path(sys.base_exec_prefix) / 'libs'
+            self.python_libdirs.append(libdir)
+        if self.macosx:
+            libdir = Path(sys.base_exec_prefix) / 'lib'
+            self.python_libdirs.append(libdir)
 
     def get_target_filename(self, name):
         suffix = sysconfig.get_config_var('EXT_SUFFIX')
@@ -190,14 +205,16 @@ class BuildConvPhase(Command):
             includes = ';'.join(includes)
             command += f' --includedirs=\"{includes}\"'
 
-        libs = self.python_libs
-        if libs:
-            libs = [str(path) for path in libs]
-            libs = ';'.join(libs)
-            command += f' --libdirs=\"{libs}\"'
+        libdirs = self.python_libdirs
+        if libdirs:
+            libdirs = [str(path) for path in libdirs]
+            libdirs = ';'.join(libdirs)
+            command += f' --libdirs=\"{libdirs}\"'
 
         target = self.get_target_path()
         command += f' --target=\"{target}\"'
+
+        command += f' --arch={self.arch}'
 
         self.subprocess(
             check_call, command,
