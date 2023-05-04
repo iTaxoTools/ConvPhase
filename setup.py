@@ -2,7 +2,8 @@
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_namespace_packages, Command, msvc
-from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools.command.build import build as _build
+from setuptools.command.develop import develop as _develop
 from subprocess import check_call, check_output, CalledProcessError
 from distutils import sysconfig
 from pathlib import Path
@@ -209,7 +210,9 @@ class BuildConvPhase(Command):
             command = f'{tool} /p:Configuration=Release'
         else:
             tool = 'make'
-            command = f'{tool} config=release'
+            # Always make, since postbuildcommands are not executed otherwise
+            # and makefile phonies are not supported by premake
+            command = f'{tool} config=release --always-make'
 
         self.subprocess(
             check_call, command,
@@ -218,7 +221,15 @@ class BuildConvPhase(Command):
         )
 
 
-class build_ext(_build_ext):
+class build(_build):
+    """Overrides setuptools to build convphase by default"""
+    def run(self):
+        self.reinitialize_command('build_convphase', inplace=0)
+        self.run_command('build_convphase')
+        super().run()
+
+
+class develop(_develop):
     """Overrides setuptools to build convphase by default"""
     def run(self):
         self.reinitialize_command('build_convphase', inplace=1)
@@ -241,8 +252,9 @@ setup(
     install_requires=[],
     extras_require={},
     cmdclass={
+        'build': build,
+        'develop': develop,
         'build_convphase': BuildConvPhase,
-        'build_ext': build_ext,
     },
     entry_points={
         'console_scripts': [
