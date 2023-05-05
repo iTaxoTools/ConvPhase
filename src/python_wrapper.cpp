@@ -205,14 +205,13 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-	std::vector<char const*> input_vector;
-  PyObject* item;
+	std::vector<std::string> input_vector;
 
+  PyObject* item;
   while ((item = PyIter_Next(input_iterator)) != NULL) {
 		if (PyUnicode_Check(item)) {
 			const char* str = PyUnicode_AsUTF8(item);
-			char* cpy = (char*)malloc(strlen (str) + 1);
-			strcpy(cpy, str);
+			std::string cpy(str);
 			input_vector.push_back(cpy);
 		} else {
 			printf("Iterable produced a non-string\n");
@@ -223,13 +222,11 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 
   Py_DECREF(input_iterator);
 
-	std::vector<char const*> output_vector;
+	std::vector<std::string> output_vector;
 
 	// Replace this segment with actual calculations
-	for (char const* elem : input_vector) {
-		char* str = (char*)malloc(strlen (elem) + 3);
-		strcat(str, elem);
-		strcat(str, "+");
+	for (std::string elem : input_vector) {
+		std::string str = elem + "+";
 		output_vector.push_back(str);
 	}
 
@@ -239,7 +236,6 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 	}
 
 	result->data = output_vector;
-
 
 	return (PyObject*)result;
 }

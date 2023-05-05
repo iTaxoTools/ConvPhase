@@ -3,10 +3,11 @@
 
 #include <Python.h>
 #include <vector>
+#include <string>
 
 typedef struct {
     PyObject_HEAD
-    std::vector<char const*> data;
+    std::vector<std::string> data;
     int current;
 } IteratorObject;
 
