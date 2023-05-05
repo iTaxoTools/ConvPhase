@@ -1,10 +1,10 @@
 #include "python_wrapper.h"
 #include "convphase.h"
 
-static PyTypeObject IteratorType = {
+static PyTypeObject OutputLinesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  "convphase.Iterator",           /* tp_name */
-  sizeof(IteratorObject),         /* tp_basicsize */
+  "convphase.OutputLines",        /* tp_name */
+  sizeof(OutputLinesObject),      /* tp_basicsize */
   0,                              /* tp_itemsize */
   0,                              /* tp_dealloc */
   0,                              /* tp_vectorcall_offset */
@@ -22,13 +22,15 @@ static PyTypeObject IteratorType = {
   0,                              /* tp_setattro */
   0,                              /* tp_as_buffer */
   Py_TPFLAGS_DEFAULT,             /* tp_flags */
-  PyDoc_STR("Iterator object"),   /* tp_doc */
+  PyDoc_STR(										  /* tp_doc */
+		"Iterator over tuples of (seqid, allelle_a, allele_b)"
+	),
   0,                              /* tp_traverse */
   0,                              /* tp_clear */
   0,                              /* tp_richcompare */
   0,                              /* tp_weaklistoffset */
-  Iterator_iter,                  /* tp_iter */
-  Iterator_next,                  /* tp_iternext */
+  OutputLines_iter,                  /* tp_iter */
+  OutputLines_next,                  /* tp_iternext */
   0,                              /* tp_methods */
   0,                              /* tp_members */
   0,                              /* tp_getset */
@@ -39,7 +41,7 @@ static PyTypeObject IteratorType = {
   0,                              /* tp_dictoffset */
   0,                              /* tp_init */
   0,                              /* tp_alloc */
-  Iterator_new,                   /* tp_new */
+  OutputLines_new,                   /* tp_new */
 };
 
 static PyMethodDef convPhaseFuncs[]{
@@ -67,16 +69,16 @@ PyMODINIT_FUNC PyInit_convphase(){
 	initHxcpp();
 
 	PyObject *m;
-	if (PyType_Ready(&IteratorType) < 0)
+	if (PyType_Ready(&OutputLinesType) < 0)
 		return NULL;
 
 	m = PyModule_Create(&convPhaseModule);
 	if (m == NULL)
 		return NULL;
 
-	Py_INCREF(&IteratorType);
-	if (PyModule_AddObject(m, "Iterator", (PyObject *) &IteratorType) < 0) {
-		Py_DECREF(&IteratorType);
+	Py_INCREF(&OutputLinesType);
+	if (PyModule_AddObject(m, "Iterator", (PyObject *) &OutputLinesType) < 0) {
+		Py_DECREF(&OutputLinesType);
 		Py_DECREF(m);
 		return NULL;
 	}
@@ -236,7 +238,7 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 		output_vector.push_back(line);
 	}
 
-	IteratorObject *result = (IteratorObject *)IteratorType.tp_new(&IteratorType, NULL, NULL);
+	OutputLinesObject *result = (OutputLinesObject *)OutputLinesType.tp_new(&OutputLinesType, NULL, NULL);
 	if (result == NULL) {
 		return NULL;
 	}
@@ -245,23 +247,23 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 	return (PyObject*)result;
 }
 
-static PyObject* Iterator_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+static PyObject* OutputLines_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-  IteratorObject *self;
-  self = (IteratorObject *) type->tp_alloc(type, 0);
+  OutputLinesObject *self;
+  self = (OutputLinesObject *) type->tp_alloc(type, 0);
   if (self != NULL) {
 		self->current = 0;
   }
   return (PyObject *) self;
 }
 
-static PyObject* Iterator_iter(PyObject* self) {
+static PyObject* OutputLines_iter(PyObject* self) {
   Py_INCREF(self);
   return self;
 }
 
-static PyObject* Iterator_next(PyObject* self) {
-	IteratorObject *obj = (IteratorObject *) self;
+static PyObject* OutputLines_next(PyObject* self) {
+	OutputLinesObject *obj = (OutputLinesObject *) self;
 	if ( obj->current < obj->lines.size() ) {
 		OutputLine line = obj->lines[obj->current];
 		obj->current ++;
