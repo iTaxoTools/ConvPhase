@@ -5,11 +5,22 @@
 #include <vector>
 #include <string>
 
-typedef struct {
+struct InputLine{
+	std::string id;
+	std::string data;
+};
+
+struct OutputLine{
+	std::string id;
+  std::string data_a;
+	std::string data_b;
+};
+
+struct IteratorObject{
     PyObject_HEAD
-    std::vector<std::string> data;
+    std::vector<OutputLine> lines;
     int current;
-} IteratorObject;
+} ;
 
 static PyObject* py_seqPhaseStep1(PyObject* self, PyObject* args);
 static PyObject* py_phase(PyObject* self, PyObject* args);

@@ -3,8 +3,8 @@
 
 static PyTypeObject IteratorType = {
   PyVarObject_HEAD_INIT(NULL, 0)
-  "convphase.Iterator",             /* tp_name */
-  sizeof(IteratorObject),           /* tp_basicsize */
+  "convphase.Iterator",           /* tp_name */
+  sizeof(IteratorObject),         /* tp_basicsize */
   0,                              /* tp_itemsize */
   0,                              /* tp_dealloc */
   0,                              /* tp_vectorcall_offset */
@@ -205,29 +205,35 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-	std::vector<std::string> input_vector;
+	std::vector<InputLine> input_vector;
 
   PyObject* item;
   while ((item = PyIter_Next(input_iterator)) != NULL) {
-		if (PyUnicode_Check(item)) {
-			const char* str = PyUnicode_AsUTF8(item);
-			std::string cpy(str);
-			input_vector.push_back(cpy);
-		} else {
-			printf("Iterable produced a non-string\n");
-			return NULL;
-		}
+
+		const char *c_id, *c_data;
+
+    if (!PyArg_ParseTuple(item, "ss", &c_id, &c_data)) {
+        return NULL;
+    }
+
+		std::string str_id(c_id);
+		std::string str_data(c_data);
+		InputLine line = {str_id, str_data};
+		input_vector.push_back(line);
+
     Py_DECREF(item);
   }
 
   Py_DECREF(input_iterator);
 
-	std::vector<std::string> output_vector;
+	std::vector<OutputLine> output_vector;
 
 	// Replace this segment with actual calculations
-	for (std::string elem : input_vector) {
-		std::string str = elem + "+";
-		output_vector.push_back(str);
+	for (InputLine elem : input_vector) {
+		std::string str_a = elem.data + "-";
+		std::string str_b = elem.data + "+";
+		OutputLine line = {elem.id, str_a, str_b};
+		output_vector.push_back(line);
 	}
 
 	IteratorObject *result = (IteratorObject *)IteratorType.tp_new(&IteratorType, NULL, NULL);
@@ -235,8 +241,7 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 		return NULL;
 	}
 
-	result->data = output_vector;
-
+	result->lines = output_vector;
 	return (PyObject*)result;
 }
 
@@ -257,10 +262,19 @@ static PyObject* Iterator_iter(PyObject* self) {
 
 static PyObject* Iterator_next(PyObject* self) {
 	IteratorObject *obj = (IteratorObject *) self;
-	if ( obj->current < obj->data.size() ) {
-		std::string elem = obj->data[obj->current];
+	if ( obj->current < obj->lines.size() ) {
+		OutputLine line = obj->lines[obj->current];
 		obj->current ++;
-		return PyUnicode_DecodeUTF8(elem.c_str(), elem.size(), NULL);
+
+		PyObject* id = PyUnicode_FromString(line.id.c_str());
+		PyObject* data_a = PyUnicode_FromString(line.data_a.c_str());
+		PyObject* data_b = PyUnicode_FromString(line.data_b.c_str());
+
+		PyObject* tuple = PyTuple_New(3);
+		PyTuple_SetItem(tuple, 0, id);
+		PyTuple_SetItem(tuple, 1, data_a);
+		PyTuple_SetItem(tuple, 2, data_b);
+		return tuple;
 	}
 	PyErr_SetNone(PyExc_StopIteration);
   return NULL;
