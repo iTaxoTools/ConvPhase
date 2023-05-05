@@ -1,6 +1,47 @@
 #include "python_wrapper.h"
 #include "convphase.h"
 
+static PyTypeObject IteratorType = {
+  PyVarObject_HEAD_INIT(NULL, 0)
+  "convphase.Iterator",             /* tp_name */
+  sizeof(IteratorObject),           /* tp_basicsize */
+  0,                              /* tp_itemsize */
+  0,                              /* tp_dealloc */
+  0,                              /* tp_vectorcall_offset */
+  0,                              /* tp_getattr */
+  0,                              /* tp_setattr */
+  0,                              /* tp_as_async */
+  0,                              /* tp_repr */
+  0,                              /* tp_as_number */
+  0,                              /* tp_as_sequence */
+  0,                              /* tp_as_mapping */
+  0,                              /* tp_hash */
+  0,                              /* tp_call */
+  0,                              /* tp_str */
+  0,                              /* tp_getattro */
+  0,                              /* tp_setattro */
+  0,                              /* tp_as_buffer */
+  Py_TPFLAGS_DEFAULT,             /* tp_flags */
+  PyDoc_STR("Iterator object"),   /* tp_doc */
+  0,                              /* tp_traverse */
+  0,                              /* tp_clear */
+  0,                              /* tp_richcompare */
+  0,                              /* tp_weaklistoffset */
+  Iterator_iter,                    /* tp_iter */
+  Iterator_next,                    /* tp_iternext */
+  0,                              /* tp_methods */
+  0,                              /* tp_members */
+  0,                              /* tp_getset */
+  0,                              /* tp_base */
+  0,                              /* tp_dict */
+  0,                              /* tp_descr_get */
+  0,                              /* tp_descr_set */
+  0,                              /* tp_dictoffset */
+  0,                              /* tp_init */
+  0,                              /* tp_alloc */
+  PyType_GenericNew,              /* tp_new */
+};
+
 static PyMethodDef convPhaseFuncs[]{
 	{"seqPhaseStep1", py_seqPhaseStep1, METH_VARARGS, "Convert from fasta format to phase format"},
 	{"phase",         py_phase,         METH_VARARGS, "Execute phase algorithm"},
@@ -9,6 +50,7 @@ static PyMethodDef convPhaseFuncs[]{
 	{"_iterator_test",     py_iterator_test,     METH_VARARGS, "Read and return iterators"},
 	{NULL,            NULL,             0,            NULL}
 };
+
 static struct PyModuleDef convPhaseModule{
 	PyModuleDef_HEAD_INIT,
 	"convphase",
@@ -23,7 +65,23 @@ static struct PyModuleDef convPhaseModule{
 
 PyMODINIT_FUNC PyInit_convphase(){
 	initHxcpp();
-	return PyModule_Create(&convPhaseModule);
+
+	PyObject *m;
+	if (PyType_Ready(&IteratorType) < 0)
+		return NULL;
+
+	m = PyModule_Create(&convPhaseModule);
+	if (m == NULL)
+		return NULL;
+
+	Py_INCREF(&IteratorType);
+	if (PyModule_AddObject(m, "Iterator", (PyObject *) &IteratorType) < 0) {
+		Py_DECREF(&IteratorType);
+		Py_DECREF(m);
+		return NULL;
+	}
+
+	return m;
 }
 
 PyObject* py_seqPhaseStep1(PyObject* self, PyObject* args){
@@ -132,7 +190,7 @@ PyObject* py_convPhase(PyObject* self, PyObject* args){
 	return PyUnicode_DecodeUTF8(output.c_str(), output.size(), NULL);
 }
 
-PyObject* py_iterator_test(PyObject* self, PyObject* args) {
+static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
   PyObject* iterable;
 
   if (!PyArg_ParseTuple(args, "O", &iterable)) {
@@ -159,5 +217,20 @@ PyObject* py_iterator_test(PyObject* self, PyObject* args) {
   }
 
   Py_DECREF(iterator);
-  Py_RETURN_NONE;
+
+	IteratorObject* iterator_new = PyObject_New(IteratorObject, &IteratorType);
+	if (iterator_new == NULL) {
+		return NULL;
+	}
+
+	return (PyObject*)iterator_new;
+}
+
+static PyObject* Iterator_iter(PyObject* self) {
+    Py_INCREF(self);
+    return self;
+}
+
+static PyObject* Iterator_next(PyObject* self) {
+    return PyLong_FromLong(42);
 }
