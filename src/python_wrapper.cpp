@@ -6,6 +6,7 @@ static PyMethodDef convPhaseFuncs[]{
 	{"phase",         py_phase,         METH_VARARGS, "Execute phase algorithm"},
 	{"seqPhaseStep2", py_seqPhaseStep2, METH_VARARGS, "Convert from phase format to fasta format"},
 	{"convPhase",     py_convPhase,     METH_VARARGS, "Execute convphase algorithm"},
+	{"_iterator_test",     py_iterator_test,     METH_VARARGS, "Read and return iterators"},
 	{NULL,            NULL,             0,            NULL}
 };
 static struct PyModuleDef convPhaseModule{
@@ -129,4 +130,34 @@ PyObject* py_convPhase(PyObject* self, PyObject* args){
 	std::string output = convPhase(input, options, reduce, sort);
 
 	return PyUnicode_DecodeUTF8(output.c_str(), output.size(), NULL);
+}
+
+PyObject* py_iterator_test(PyObject* self, PyObject* args) {
+  PyObject* iterable;
+
+  if (!PyArg_ParseTuple(args, "O", &iterable)) {
+    return NULL;
+  }
+
+  PyObject* iterator = PyObject_GetIter(iterable);
+
+  if (iterator == NULL) {
+    PyErr_SetString(PyExc_TypeError, "Not an iterable");
+    return NULL;
+  }
+
+  PyObject* item;
+
+  while ((item = PyIter_Next(iterator)) != NULL) {
+		if (PyUnicode_Check(item)) {
+			const char* str = PyUnicode_AsUTF8(item);
+			printf("+%s+\n", str);
+		} else {
+			printf("Not a string\n");
+		}
+    Py_DECREF(item);
+  }
+
+  Py_DECREF(iterator);
+  Py_RETURN_NONE;
 }
