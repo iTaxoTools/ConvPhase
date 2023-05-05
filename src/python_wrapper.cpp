@@ -27,8 +27,8 @@ static PyTypeObject IteratorType = {
   0,                              /* tp_clear */
   0,                              /* tp_richcompare */
   0,                              /* tp_weaklistoffset */
-  Iterator_iter,                    /* tp_iter */
-  Iterator_next,                    /* tp_iternext */
+  Iterator_iter,                  /* tp_iter */
+  Iterator_next,                  /* tp_iternext */
   0,                              /* tp_methods */
   0,                              /* tp_members */
   0,                              /* tp_getset */
@@ -39,7 +39,7 @@ static PyTypeObject IteratorType = {
   0,                              /* tp_dictoffset */
   0,                              /* tp_init */
   0,                              /* tp_alloc */
-  PyType_GenericNew,              /* tp_new */
+  Iterator_new,                   /* tp_new */
 };
 
 static PyMethodDef convPhaseFuncs[]{
@@ -191,46 +191,81 @@ PyObject* py_convPhase(PyObject* self, PyObject* args){
 }
 
 static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
-  PyObject* iterable;
 
-  if (!PyArg_ParseTuple(args, "O", &iterable)) {
+  PyObject* argument;
+  if (!PyArg_ParseTuple(args, "O", &argument)) {
+		PyErr_SetString(PyExc_TypeError, "Argument must be a single iterator");
     return NULL;
   }
 
-  PyObject* iterator = PyObject_GetIter(iterable);
+  PyObject* input_iterator = PyObject_GetIter(argument);
 
-  if (iterator == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Not an iterable");
+  if (input_iterator == NULL) {
+    PyErr_SetString(PyExc_TypeError, "Argument must be iterable");
     return NULL;
   }
 
+	std::vector<char const*> input_vector;
   PyObject* item;
 
-  while ((item = PyIter_Next(iterator)) != NULL) {
+  while ((item = PyIter_Next(input_iterator)) != NULL) {
 		if (PyUnicode_Check(item)) {
 			const char* str = PyUnicode_AsUTF8(item);
-			printf("+%s+\n", str);
+			char* cpy = (char*)malloc(strlen (str) + 1);
+			strcpy(cpy, str);
+			input_vector.push_back(cpy);
 		} else {
-			printf("Not a string\n");
+			printf("Iterable produced a non-string\n");
+			return NULL;
 		}
     Py_DECREF(item);
   }
 
-  Py_DECREF(iterator);
+  Py_DECREF(input_iterator);
 
-	IteratorObject* iterator_new = PyObject_New(IteratorObject, &IteratorType);
-	if (iterator_new == NULL) {
+	std::vector<char const*> output_vector;
+
+	// Replace this segment with actual calculations
+	for (char const* elem : input_vector) {
+		char* str = (char*)malloc(strlen (elem) + 3);
+		strcat(str, elem);
+		strcat(str, "+");
+		output_vector.push_back(str);
+	}
+
+	IteratorObject *result = (IteratorObject *)IteratorType.tp_new(&IteratorType, NULL, NULL);
+	if (result == NULL) {
 		return NULL;
 	}
 
-	return (PyObject*)iterator_new;
+	result->data = output_vector;
+
+
+	return (PyObject*)result;
+}
+
+static PyObject* Iterator_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+  IteratorObject *self;
+  self = (IteratorObject *) type->tp_alloc(type, 0);
+  if (self != NULL) {
+		self->current = 0;
+  }
+  return (PyObject *) self;
 }
 
 static PyObject* Iterator_iter(PyObject* self) {
-    Py_INCREF(self);
-    return self;
+  Py_INCREF(self);
+  return self;
 }
 
 static PyObject* Iterator_next(PyObject* self) {
-    return PyLong_FromLong(42);
+	IteratorObject *obj = (IteratorObject *) self;
+	if ( obj->current < obj->data.size() ) {
+		std::string elem = obj->data[obj->current];
+		obj->current ++;
+		return PyUnicode_DecodeUTF8(elem.c_str(), elem.size(), NULL);
+	}
+	PyErr_SetNone(PyExc_StopIteration);
+  return NULL;
 }

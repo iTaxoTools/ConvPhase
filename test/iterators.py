@@ -1,9 +1,8 @@
 from itaxotools.convphase.convphase import _iterator_test
 
-x = (str(i) for i in range(10))
+x = ['AAA', 'CCC', 'TTT']
 y = _iterator_test(x)
-for i in range(10):
-    z = next(y)
+for z in y:
     print(z)
 
 del y
