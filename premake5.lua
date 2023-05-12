@@ -46,7 +46,7 @@ workspace("ConvPhase")
 		trigger = "pythonversion",
 		category = "Custom",
 		description = "Python version to link against for non-Windows systems",
-		default = "3.10"
+		default = "3.11"
 	})
 
 

@@ -45,9 +45,15 @@ FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 			fprintf(stderr, "Error: Format not supported for parsing\n");
 	}
 }
+FastaConverter::FastaConverter(std::vector<Sequence> v){
+	add(v);
+}
 
 FastaConverter::operator std::string(){
 	return toString();
+}
+FastaConverter::operator std::vector<Sequence>(){
+	return getSequences();
 }
 
 inline bool fastaCheck1(std::string in, std::string sep = ""){
@@ -196,6 +202,12 @@ FastaConverter& FastaConverter::parseNexus(std::string in){
 	//TODO
 }
 
+FastaConverter& FastaConverter::add(std::vector<Sequence> v){
+	for(Sequence const& e: v)
+		sequences.push_back(e);
+	return *this;
+}
+
 std::string FastaConverter::toString(){
 	switch(format){
 		case FCF_NONE:
@@ -259,6 +271,9 @@ std::string FastaConverter::getNexus(){
 	std::string out;
 	return out;
 	//TODO
+}
+std::vector<Sequence> FastaConverter::getSequences(){
+	return sequences;
 }
 
 void FastaConverter::clear(){

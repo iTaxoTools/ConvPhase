@@ -1,5 +1,6 @@
 #include "python_wrapper.h"
 #include "convphase.h"
+#include "fastaconverter.h"
 
 static PyTypeObject OutputLinesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
@@ -228,15 +229,31 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 
   Py_DECREF(input_iterator);
 
-	std::vector<OutputLine> output_vector;
-
-	// Replace this segment with actual calculations
-	for (InputLine elem : input_vector) {
-		std::string str_a = elem.data + "-";
-		std::string str_b = elem.data + "+";
-		OutputLine line = {elem.id, str_a, str_b};
-		output_vector.push_back(line);
+	std::vector<Sequence> input;
+	for(InputLine const& il: input_vector){
+		Sequence s;
+		s.seqid = il.id;
+		s.data = il.data;
+		input.push_back(s);
 	}
+	std::vector<Sequence> out = convPhase(input);
+	std::vector<OutputLine> output_vector;
+	for(int i = 0; i < out.size(); i += 2){
+		OutputLine ol;
+		ol.id = out[i].seqid;
+		ol.id.pop_back();
+		ol.data_a = out[i].data;
+		ol.data_b = out[i+1].data;
+		output_vector.push_back(ol);
+	}
+
+//	// Replace this segment with actual calculations
+//	for (InputLine elem : input_vector) {
+//		std::string str_a = elem.data + "-";
+//		std::string str_b = elem.data + "+";
+//		OutputLine line = {elem.id, str_a, str_b};
+//		output_vector.push_back(line);
+//	}
 
 	OutputLinesObject *result = (OutputLinesObject *)OutputLinesType.tp_new(&OutputLinesType, NULL, NULL);
 	if (result == NULL) {
@@ -247,8 +264,7 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 	return (PyObject*)result;
 }
 
-static PyObject* OutputLines_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
+static PyObject* OutputLines_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   OutputLinesObject *self;
   self = (OutputLinesObject *) type->tp_alloc(type, 0);
   if (self != NULL) {

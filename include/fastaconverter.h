@@ -26,8 +26,10 @@ class FastaConverter{
 public:
 	FastaConverter() = default;
 	FastaConverter(std::string in, FastaConverterFormat f = FCF_NONE);
+	FastaConverter(std::vector<Sequence> v);
 
 	operator std::string();
+	operator std::vector<Sequence>();
 
 	FastaConverter& parse(std::string in); // tries to guess format
 	FastaConverter& parseFasta(std::string in, std::string sep = ""); // separator has to be escaped if needed
@@ -37,12 +39,16 @@ public:
 	FastaConverter& parseTsv(std::string in);
 	FastaConverter& parseNexus(std::string in);
 
+	FastaConverter& add(std::vector<Sequence> v);
+
 	std::string toString();
 	std::string getFasta(std::string sep = "");
 	std::string getMoIDFasta();
 	std::string getHapViewFasta();
 	std::string getTsv();
 	std::string getNexus();
+
+	std::vector<Sequence> getSequences();
 
 	void clear();
 	bool allHaveTaxon();
