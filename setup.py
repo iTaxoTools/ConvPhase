@@ -43,6 +43,7 @@ class BuildConvPhase(Command):
 
         self.build_lib = None
         self.plat_name = None
+        self.debug = None
 
         self.arch = None
         self.windows = False
@@ -55,6 +56,7 @@ class BuildConvPhase(Command):
             'build',
             ('build_lib', 'build_lib'),
             ('plat_name', 'plat_name'),
+            ('debug', 'debug'),
         )
 
         if self.plat_name.startswith('win-'):
@@ -159,9 +161,18 @@ class BuildConvPhase(Command):
         if self.windows:
             libdir = Path(sys.base_exec_prefix) / 'libs'
             self.python_libdirs.append(libdir)
-        if self.macosx:
+        else:
             libdir = Path(sys.base_exec_prefix) / 'lib'
             self.python_libdirs.append(libdir)
+
+    def get_python_suffix(self):
+        template = '{}.{}'
+        if self.debug:
+            template = template + '_d'
+        return template.format(
+            sys.hexversion >> 24,
+            (sys.hexversion >> 16) & 0xFF,
+        )
 
     def get_target_filename(self, name):
         suffix = sysconfig.get_config_var('EXT_SUFFIX')
@@ -217,6 +228,9 @@ class BuildConvPhase(Command):
         command += f' --target=\"{target}\"'
 
         command += f' --arch={self.arch}'
+
+        suffix = self.get_python_suffix()
+        command += f' --pythonversion={suffix}'
 
         self.subprocess(
             check_call, command,
