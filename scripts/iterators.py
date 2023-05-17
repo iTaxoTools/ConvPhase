@@ -1,7 +1,7 @@
 from sys import argv
 from pathlib import Path
 
-from itaxotools.convphase.convphase import _iterator_test
+from itaxotools.convphase.convphase import iterPhase
 from itaxotools.taxi2.sequences import SequenceHandler
 
 input_path = Path(argv[1])
@@ -13,7 +13,7 @@ for z in x:
     print(z)
 
 print('#'*50)
-y = _iterator_test(x)
+y = iterPhase(x, [])
 
 for z in y:
     print(z)
