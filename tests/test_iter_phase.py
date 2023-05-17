@@ -25,6 +25,8 @@ class ConvPhaseTest(NamedTuple):
     def validate(self):
         results = iter_phase(self.unphased, **self.parameters)
         results = list(results)
+        print('f', self.phased)
+        print('g', results)
         for result, fixed in zip(results, self.phased):
             assert result == fixed
 

@@ -195,18 +195,39 @@ PyObject* py_convPhase(PyObject* self, PyObject* args){
 
 static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 
-  PyObject* argument;
-  if (!PyArg_ParseTuple(args, "O", &argument)) {
-		PyErr_SetString(PyExc_TypeError, "Argument must be a single iterator");
+  PyObject* input_argument;
+  PyObject* phase_arguments;
+
+	std::vector<char const*> options;
+	bool reduce = false;
+	bool sort = false;
+
+  if (!PyArg_ParseTuple(args, "OO", &input_argument, &phase_arguments)) {
+		PyErr_SetString(PyExc_TypeError, "Function expects exactly two arguments: an iterator of tuples and a list of strings");
     return NULL;
   }
 
-  PyObject* input_iterator = PyObject_GetIter(argument);
+  PyObject* input_iterator = PyObject_GetIter(input_argument);
 
   if (input_iterator == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Argument must be iterable");
+    PyErr_SetString(PyExc_TypeError, "First argument must be iterable");
     return NULL;
   }
+
+  if (!PyList_Check(phase_arguments)) {
+    PyErr_SetString(PyExc_TypeError, "Second argument must be a list of strings");
+    return NULL;
+  }
+
+  Py_ssize_t phase_argc = PyList_Size(phase_arguments);
+  for(int i = 0; i < phase_argc; i++){
+		char const* str = PyUnicode_AsUTF8(PyList_GetItem(phase_arguments, i));
+		if(!str) {
+      PyErr_SetString(PyExc_TypeError, "Second argument must be a list of strings");
+      return NULL;
+    }
+		options.push_back(str);
+	}
 
 	std::vector<InputLine> input_vector;
 
@@ -236,7 +257,7 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 		s.data = il.data;
 		input.push_back(s);
 	}
-	std::vector<Sequence> out = convPhase(input);
+	std::vector<Sequence> out = convPhase(input, options, reduce, sort);
 	std::vector<OutputLine> output_vector;
 	for(int i = 0; i < out.size(); i += 2){
 		OutputLine ol;
@@ -246,14 +267,6 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 		ol.data_b = out[i+1].data;
 		output_vector.push_back(ol);
 	}
-
-//	// Replace this segment with actual calculations
-//	for (InputLine elem : input_vector) {
-//		std::string str_a = elem.data + "-";
-//		std::string str_b = elem.data + "+";
-//		OutputLine line = {elem.id, str_a, str_b};
-//		output_vector.push_back(line);
-//	}
 
 	OutputLinesObject *result = (OutputLinesObject *)OutputLinesType.tp_new(&OutputLinesType, NULL, NULL);
 	if (result == NULL) {
