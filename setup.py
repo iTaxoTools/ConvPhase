@@ -285,7 +285,11 @@ setup(
     install_requires=[
         'taxi2==2.1.dev1',
     ],
-    extras_require={},
+    extras_require={
+        'dev': [
+            'pytest',
+        ],
+    },
     cmdclass={
         'build': build,
         'develop': develop,

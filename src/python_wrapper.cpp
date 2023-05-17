@@ -241,7 +241,7 @@ static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
 	for(int i = 0; i < out.size(); i += 2){
 		OutputLine ol;
 		ol.id = out[i].seqid;
-		ol.id.pop_back();
+		// ol.id.pop_back();
 		ol.data_a = out[i].data;
 		ol.data_b = out[i+1].data;
 		output_vector.push_back(ol);

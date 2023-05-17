@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from sys import stderr
 
-from .main import main
+from .main import main, iter_phase
 
 
 def run():
