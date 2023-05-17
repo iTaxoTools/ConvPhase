@@ -6,6 +6,7 @@ from typing import NamedTuple
 import pytest
 
 from itaxotools.convphase import iter_phase
+from itaxotools.convphase.types import PhasedSequence, UnphasedSequence
 
 
 class ConvPhaseTest(NamedTuple):
@@ -29,15 +30,15 @@ class ConvPhaseTest(NamedTuple):
 
 def unphased_dummy() -> list[tuple[str, str]]:
     return [
-        ('id1', 'AAA'),
-        ('id2', 'GGG'),
+        UnphasedSequence('id1', 'AAA'),
+        UnphasedSequence('id2', 'GGG'),
     ]
 
 
 def phased_dummy() -> list[tuple[str, str, str]]:
     return [
-        ('id1', 'AAA', 'AAA'),
-        ('id2', 'GGG', 'GGG'),
+        PhasedSequence('id1', 'AAA', 'AAA'),
+        PhasedSequence('id2', 'GGG', 'GGG'),
     ]
 
 

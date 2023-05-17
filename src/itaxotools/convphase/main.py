@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .convphase import convPhase, _iterator_test
+from .types import PhasedSequence, UnphasedSequence
 
 
 def main(
@@ -28,13 +29,13 @@ def main(
 
 
 def iter_phase(
-    input: iter[tuple[str, str]],
+    input: iter[UnphasedSequence],
     number_of_iterations: int = 100,
     thinning_interval: int = 1,
     burn_in: int = 100,
     phase_threshold: float = 0.9,
     allele_threshold: float = 0.9,
-) -> iter[tuple[str, str, str]]:
+) -> iter[PhasedSequence]:
 
     args = []
 
@@ -46,4 +47,4 @@ def iter_phase(
     args.append(str(burn_in))
 
     output = _iterator_test(input)
-    return output
+    return (PhasedSequence(*x) for x in output)
