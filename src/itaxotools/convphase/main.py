@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .convphase import convPhase, _iterator_test
+from .convphase import convPhase, iterPhase
 from .types import PhasedSequence, UnphasedSequence
 
 
@@ -48,5 +48,5 @@ def iter_phase(
 
     print('!', args)
 
-    output = _iterator_test(input, args)
+    output = iterPhase(input, args)
     return (PhasedSequence(*x) for x in output)

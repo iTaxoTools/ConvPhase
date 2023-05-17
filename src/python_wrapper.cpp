@@ -50,7 +50,7 @@ static PyMethodDef convPhaseFuncs[]{
 	{"phase",         py_phase,         METH_VARARGS, "Execute phase algorithm"},
 	{"seqPhaseStep2", py_seqPhaseStep2, METH_VARARGS, "Convert from phase format to fasta format"},
 	{"convPhase",     py_convPhase,     METH_VARARGS, "Execute convphase algorithm"},
-	{"_iterator_test",     py_iterator_test,     METH_VARARGS, "Read and return iterators"},
+	{"iterPhase",     py_iterPhase,     METH_VARARGS, "Read and return iterators"},
 	{NULL,            NULL,             0,            NULL}
 };
 
@@ -193,7 +193,7 @@ PyObject* py_convPhase(PyObject* self, PyObject* args){
 	return PyUnicode_DecodeUTF8(output.c_str(), output.size(), NULL);
 }
 
-static PyObject* py_iterator_test(PyObject* self, PyObject* args) {
+static PyObject* py_iterPhase(PyObject* self, PyObject* args) {
 
   PyObject* input_argument;
   PyObject* phase_arguments;
