@@ -67,7 +67,7 @@ class BuildConvPhase(Command):
         self.arch = platform.machine()
         if self.arch.upper() == 'AMD64':
             self.arch = 'x86_64'
-            
+
         self.find_hxcpp_includes()
         self.find_python_includes()
         self.find_python_libdirs()
@@ -282,7 +282,9 @@ setup(
         where='src',
     ),
     python_requires='>=3.10.2, <4',
-    install_requires=[],
+    install_requires=[
+        'taxi2==2.1.dev1',
+    ],
     extras_require={},
     cmdclass={
         'build': build,
