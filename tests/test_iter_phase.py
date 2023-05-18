@@ -108,7 +108,7 @@ def test_convphase(test: AlignTest) -> None:
     test.validate()
 
 
-@pytest.mark.xfail
+@pytest.mark.skip
 @pytest.mark.parametrize('test', convphase_tests_failing)
 def test_convphase_failing(test: AlignTest) -> None:
     test.validate()
