@@ -7,7 +7,7 @@ from itaxotools.convphase.types import UnphasedSequence, UnphasedSequence
 from itaxotools.convphase.main import iter_phase
 
 
-def phase_mimic_format(input_path: Path, output_path: Path):
+def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
 
     info = get_info_from_path(input_path)
     read_handler_original = get_handler_from_info(input_path, 'r', info)
@@ -16,7 +16,7 @@ def phase_mimic_format(input_path: Path, output_path: Path):
 
     unphased = Sequences(read_handler_for_phasing)
     unphased = (UnphasedSequence(sequence.id, sequence.seq) for sequence in unphased)
-    phased = iter_phase(unphased)
+    phased = iter_phase(unphased, *args, **kwargs)
 
     original_data = Sequences(read_handler_original)
 

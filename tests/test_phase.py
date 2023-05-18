@@ -14,6 +14,7 @@ TEST_DATA_DIR = Path(__file__).parent / Path(__file__).stem
 class MimicTest(NamedTuple):
     input_file: str
     output_file: str
+    kwargs: dict = {}
 
     @property
     def input_path(self) -> Path:
@@ -31,7 +32,7 @@ class MimicTest(NamedTuple):
         input_path = TEST_DATA_DIR / self.input_file
         target_path = TEST_DATA_DIR / self.output_file
         output_path = tmp_path / self.output_file
-        phase_mimic_format(input_path, output_path)
+        phase_mimic_format(input_path, output_path, **self.kwargs)
         assert_eq_files(output_path, target_path)
 
 
@@ -41,7 +42,11 @@ phase_tests = [
     MimicTest('organism.dot.unphased.fas', 'organism.dot.phased.fas'),
 
     MimicTest('simple.unphased.tsv', 'simple.phased.tsv'),
-    MimicTest('organism.unphased.tsv', 'simple.phased.tsv'),
+    MimicTest('organism.unphased.tsv', 'organism.phased.tsv'),
+
+    MimicTest('sample.unphased.fas', 'sample.phased.fas'),
+    MimicTest('sample.unphased.fas', 'sample.phased.p03.fas',
+        dict(phase_threshold=0.3)),
 ]
 
 
