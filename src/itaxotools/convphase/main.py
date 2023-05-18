@@ -46,7 +46,5 @@ def iter_phase(
     args.append(str(thinning_interval))
     args.append(str(burn_in))
 
-    print('!', args)
-
     output = iterPhase(input, args)
     return (PhasedSequence(*x) for x in output)
