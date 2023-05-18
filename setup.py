@@ -297,7 +297,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'convphase = itaxotools.convphase:run',
+            'convphase = itaxotools.convphase.__main__:run',
         ],
     },
     classifiers=[

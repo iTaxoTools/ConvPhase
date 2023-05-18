@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 import pytest
 
-from itaxotools.convphase import iter_phase
+from itaxotools.convphase.phase import iter_phase
 from itaxotools.convphase.types import PhasedSequence, UnphasedSequence
 
 

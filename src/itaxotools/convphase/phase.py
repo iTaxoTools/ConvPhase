@@ -1,10 +1,34 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from itaxotools.taxi2.sequences import Sequences, Sequence
 
-from itaxotools.convphase.files import get_info_from_path, get_handler_from_info
-from itaxotools.convphase.types import UnphasedSequence, UnphasedSequence
-from itaxotools.convphase.main import iter_phase
+from .convphase import convPhase, iterPhase
+from .files import get_info_from_path, get_handler_from_info
+from .types import PhasedSequence, UnphasedSequence
+
+
+def iter_phase(
+    input: iter[UnphasedSequence],
+    number_of_iterations: int = 100,
+    thinning_interval: int = 1,
+    burn_in: int = 100,
+    phase_threshold: float = 0.9,
+    allele_threshold: float = 0.9,
+) -> iter[PhasedSequence]:
+
+    args = []
+
+    args.append(f'-p{phase_threshold}')
+    args.append(f'-q{allele_threshold}')
+
+    args.append(str(number_of_iterations))
+    args.append(str(thinning_interval))
+    args.append(str(burn_in))
+
+    output = iterPhase(input, args)
+    return (PhasedSequence(*x) for x in output)
 
 
 def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
@@ -28,3 +52,29 @@ def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
             sequence_b = Sequence(line.id + 'b', line.data_b, sequence.extras)
             file.write(sequence_a)
             file.write(sequence_b)
+
+
+def direct_phase(
+    input: str,
+    number_of_iterations: int = 100,
+    thinning_interval: int = 1,
+    burn_in: int = 100,
+    phase_threshold: float = 0.9,
+    allele_threshold: float = 0.9,
+) -> str:
+
+    """Uses the C++ backend to parse and write data"""
+
+    args = []
+
+    args.append(input)
+
+    args.append(f'-p{phase_threshold}')
+    args.append(f'-q{allele_threshold}')
+
+    args.append(str(number_of_iterations))
+    args.append(str(thinning_interval))
+    args.append(str(burn_in))
+
+    output = convPhase(*args)
+    return output
