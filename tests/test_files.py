@@ -17,23 +17,12 @@ class HandlerTest(NamedTuple):
     file: str
 
     @property
-    def input_path(self) -> Path:
-        return TEST_DATA_DIR / self.file
-
-    @property
-    def fixed_path(self) -> Path:
-        return TEST_DATA_DIR / self.file
-
-    @property
     def file_path(self) -> Path:
         return TEST_DATA_DIR / self.file
 
     @property
     def fixed(self) -> Sequences:
         return self.fixture()
-
-    def get_output_path(self, tmp_path) -> Path:
-        return tmp_path / self.file
 
     def validate(self, tmp_path: Path) -> None:
         output_path = tmp_path / self.file
