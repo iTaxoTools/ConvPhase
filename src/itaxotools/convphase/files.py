@@ -12,7 +12,11 @@ def get_info_from_path(path: Path) -> bool:
     format = identify_format(path)
     if format not in [FileFormat.Fasta, FileFormat.Tabfile]:
         raise Exception('Unsupported format')
-    return get_info(path)
+    info = get_info(path)
+    if format == FileFormat.Tabfile:
+        if not info.header_individuals or not info.header_sequences:
+            raise Exception('Cannot process tabfile headers')
+    return info
 
 
 def get_handler_from_info(path: Path, mode: Mode, info: FileInfo) -> SequenceHandler | None:

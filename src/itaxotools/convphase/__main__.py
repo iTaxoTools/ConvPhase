@@ -39,7 +39,7 @@ def run():
     print(f'Calling convphase on {repr(input_path.name)} with parameters:', file=stderr)
     for k, v in vars(args).items():
         print(f'> {k} = {v}', file=stderr)
-    results = phase_mimic_format(input_path, output_path, **vars(args))
+    phase_mimic_format(input_path, output_path, **vars(args))
 
     print('', file=stderr)
     print('Phasing completed successfully!', file=stderr)

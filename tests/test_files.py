@@ -7,6 +7,7 @@ import pytest
 from utility import assert_eq_files
 
 from itaxotools.taxi2.sequences import Sequence, SequenceHandler, Sequences
+from itaxotools.taxi2.file_types import FileInfo, FileFormat
 from itaxotools.convphase.files import get_info_from_path, get_handler_from_info
 
 TEST_DATA_DIR = Path(__file__).parent / Path(__file__).stem
@@ -50,6 +51,21 @@ class HandlerTest(NamedTuple):
             assert sequence in file_sequences
 
 
+class InfoTest(NamedTuple):
+    file: str
+    info: dict = {}
+
+    @property
+    def file_path(self) -> Path:
+        return TEST_DATA_DIR / self.file
+
+    def validate(self, tmp_path: Path) -> None:
+        file_info = get_info_from_path(self.file_path)
+        for field in self.info:
+            assert field in file_info
+            assert self.info[field] == file_info[field]
+
+
 def sequences_simple() -> Sequences:
     return Sequences([
         Sequence('id1', 'ATC'),
@@ -78,3 +94,26 @@ handler_tests = [
 @pytest.mark.parametrize('test', handler_tests)
 def test_files(test: HandlerTest, tmp_path: Path) -> None:
     test.validate(tmp_path)
+
+
+info_tests = [
+    InfoTest('simple.tsv', dict(format=FileFormat.Tabfile)),
+    InfoTest('simple.fas', dict(format=FileFormat.Fasta)),
+]
+
+
+@pytest.mark.parametrize('test', info_tests)
+def test_bad_infos(test: InfoTest, tmp_path: Path) -> None:
+    test.validate(tmp_path)
+
+
+bad_info_tests = [
+    InfoTest('empty.tsv'),
+    InfoTest('no_headers.tsv'),
+]
+
+
+@pytest.mark.parametrize('test', bad_info_tests)
+def test_bad_infos(test: InfoTest, tmp_path: Path) -> None:
+    with pytest.raises(Exception):
+        test.validate(tmp_path)
