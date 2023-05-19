@@ -45,7 +45,9 @@ def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
     with write_handler as file:
         for sequence in data:
             try:
-                line = phased_dict[sequence.id]
+                # SeqPhase automatically replaces spaces...
+                phased_id = sequence.id.replace(' ', '_')
+                line = phased_dict[phased_id]
             except KeyError:
                 raise Exception(f'Sequence identifier not found in phased data: "{sequence.id}"')
             sequence_a = Sequence(sequence.id + 'a', line.data_a, sequence.extras)
