@@ -34,20 +34,16 @@ def iter_phase(
 def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
 
     info = get_info_from_path(input_path)
-    read_handler_original = get_handler_from_info(input_path, 'r', info)
-    read_handler_for_phasing = get_handler_from_info(input_path, 'r', info)
+    data = Sequences(get_handler_from_info, input_path, 'r', info)
     write_handler = get_handler_from_info(output_path, 'w', info)
 
-    unphased = Sequences(read_handler_for_phasing)
-    unphased = (UnphasedSequence(sequence.id, sequence.seq) for sequence in unphased)
+    unphased = (UnphasedSequence(sequence.id, sequence.seq) for sequence in data)
     phased = iter_phase(unphased, *args, **kwargs)
 
-    original_data = Sequences(read_handler_original)
-
     with write_handler as file:
-        for sequence, line in zip(original_data, phased):
+        for sequence, line in zip(data, phased):
             if sequence.id != line.id:
-                raise Exception('Mismatch of ids between original and phased data')
+                raise Exception(f'Mismatch of ids between original and phased data: {repr(sequence.id)} != {repr(line.id)}')
             sequence_a = Sequence(line.id + 'a', line.data_a, sequence.extras)
             sequence_b = Sequence(line.id + 'b', line.data_b, sequence.extras)
             file.write(sequence_a)

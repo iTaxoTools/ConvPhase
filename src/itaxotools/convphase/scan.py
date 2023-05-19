@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from itaxotools.taxi2.sequences import Sequences
 
+from .files import get_info_from_path, get_handler_from_info
 from .types import PhaseWarning
 
 
-def scan_sequences(sequences: Sequences) -> list[Warning]:
+def scan_sequences(sequences: Sequences) -> list[PhaseWarning]:
     sequences = iter(sequences)
     try:
         first = next(sequences)
@@ -25,6 +26,12 @@ def scan_sequences(sequences: Sequences) -> list[Warning]:
     if has_missing:
         warns.append(PhaseWarning.Missing())
     return warns
+
+
+def scan_path(path: Path) -> list[PhaseWarning]:
+    info = get_info_from_path(path)
+    data = Sequences(get_handler_from_info, path, 'r', info)
+    return scan_sequences(data)
 
 
 def _scan_missing(seq: str) -> bool:
