@@ -91,6 +91,14 @@ def non_uniform_and_missing_sequences() -> Sequences:
     ])
 
 
+def duplicate_id_sequences() -> Sequences:
+    return Sequences([
+        Sequence('id1', 'AAA'),
+        Sequence('id1', 'GGG'),
+    ])
+
+
+
 
 scan_tests = [
     ScanTest(good_sequences, []),
@@ -104,6 +112,7 @@ scan_tests = [
     ScanTest(non_uniform_sequences_2, [PhaseWarning.Length]),
     ScanTest(non_uniform_and_missing_sequences,
         [PhaseWarning.Length, PhaseWarning.Missing]),
+    ScanTest(duplicate_id_sequences, [PhaseWarning.Duplicate]),
 ]
 
 

@@ -44,3 +44,9 @@ class Missing(PhaseWarning):
     def __init__(self):
         text = 'Sequences contain gaps or missing nucleotides!'
         super().__init__(text)
+
+
+class Duplicate(PhaseWarning):
+    def __init__(self):
+        text = 'Dataset contains duplicate ids!'
+        super().__init__(text)

@@ -14,17 +14,24 @@ def scan_sequences(sequences: Sequences) -> list[PhaseWarning]:
         return [PhaseWarning.Empty()]
     length = len(first.seq)
     has_missing = _scan_missing(first.seq)
+    ids = set([first.id])
     uniform = True
+    duplicates = False
     for sequence in sequences:
         if len(sequence.seq) != length:
             uniform = False
         if not has_missing:
             has_missing = _scan_missing(sequence.seq)
+        if not duplicates and sequence.id in ids:
+            duplicates = True
+        ids.add(sequence.id)
     warns = []
     if not uniform:
         warns.append(PhaseWarning.Length())
     if has_missing:
         warns.append(PhaseWarning.Missing())
+    if duplicates:
+        warns.append(PhaseWarning.Duplicate())
     return warns
 
 
