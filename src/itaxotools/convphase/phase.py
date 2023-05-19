@@ -40,12 +40,16 @@ def phase_mimic_format(input_path: Path, output_path: Path, *args, **kwargs):
     unphased = (UnphasedSequence(sequence.id, sequence.seq) for sequence in data)
     phased = iter_phase(unphased, *args, **kwargs)
 
+    phased_dict = {line.id: line for line in phased}
+
     with write_handler as file:
-        for sequence, line in zip(data, phased):
-            if sequence.id != line.id:
-                raise Exception(f'Mismatch of ids between original and phased data: {repr(sequence.id)} != {repr(line.id)}')
-            sequence_a = Sequence(line.id + 'a', line.data_a, sequence.extras)
-            sequence_b = Sequence(line.id + 'b', line.data_b, sequence.extras)
+        for sequence in data:
+            try:
+                line = phased_dict[sequence.id]
+            except KeyError:
+                raise Exception(f'Sequence identifier not found in phased data: "{sequence.id}"')
+            sequence_a = Sequence(sequence.id + 'a', line.data_a, sequence.extras)
+            sequence_b = Sequence(sequence.id + 'b', line.data_b, sequence.extras)
             file.write(sequence_a)
             file.write(sequence_b)
 
