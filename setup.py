@@ -283,7 +283,7 @@ setup(
     ),
     python_requires='>=3.10.2, <4',
     install_requires=[
-        'taxi2==2.1.dev1',
+        'taxi2==2.1.1',
     ],
     extras_require={
         'dev': [
