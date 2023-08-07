@@ -43,10 +43,10 @@ workspace("ConvPhase")
 		}
 	})
 	newoption({
-		trigger = "pythonversion",
+		trigger = "pythonlib",
 		category = "Custom",
-		description = "Python version to link against for non-Windows systems",
-		default = "3.11"
+		description = "Python library to link against",
+		default = "python3.11"
 	})
 
 
@@ -93,10 +93,8 @@ workspace("ConvPhase")
 			"phase",
 			"seqphase",
 		})
-		filter({"not options:nopython", "system:windows"})
-			links("python3")
-		filter({"not options:nopython", "system:not windows"})
-			links("python" .. _OPTIONS["pythonVersion"])
+		filter("not options:nopython")
+			links(_OPTIONS["pythonlib"])
 		filter({})
 		defines({
 			"CP_PHASE_LIB",
@@ -154,7 +152,6 @@ workspace("ConvPhase")
 					"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
 				}
 			filter({})
-
 		end
 
 

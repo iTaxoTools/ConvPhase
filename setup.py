@@ -165,8 +165,11 @@ class BuildConvPhase(Command):
             libdir = Path(sys.base_exec_prefix) / 'lib'
             self.python_libdirs.append(libdir)
 
-    def get_python_suffix(self):
-        template = '{}.{}'
+    def get_python_library(self):
+        if self.windows:
+            template = 'python{}{}'
+        else:
+            template = 'python{}.{}'
         if self.debug:
             template = template + '_d'
         return template.format(
@@ -229,8 +232,8 @@ class BuildConvPhase(Command):
 
         command += f' --arch={self.arch}'
 
-        suffix = self.get_python_suffix()
-        command += f' --pythonversion={suffix}'
+        lib = self.get_python_library()
+        command += f' --pythonlib={lib}'
 
         self.subprocess(
             check_call, command,
