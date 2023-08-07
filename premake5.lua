@@ -50,7 +50,6 @@ workspace("ConvPhase")
 	})
 
 
-
 	project("convphase")
 		filter("options:kind=exe")
 			kind("ConsoleApp")
