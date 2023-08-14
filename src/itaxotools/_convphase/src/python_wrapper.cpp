@@ -1,6 +1,11 @@
 #include "python_wrapper.h"
 #include "convphase.h"
 #include "fastaconverter.h"
+#include "phase.2.1.1.source/globals.hpp"
+
+
+PyObject* g_pythonProgressCallback = NULL;
+
 
 static PyTypeObject OutputLinesType = {
   PyVarObject_HEAD_INIT(NULL, 0)
@@ -46,6 +51,7 @@ static PyTypeObject OutputLinesType = {
 };
 
 static PyMethodDef convPhaseFuncs[]{
+	{"setProgressCallback", py_setProgressCallback, METH_VARARGS, "Set the progress callback"},
 	{"seqPhaseStep1", py_seqPhaseStep1, METH_VARARGS, "Convert from fasta format to phase format"},
 	{"phase",         py_phase,         METH_VARARGS, "Execute phase algorithm"},
 	{"seqPhaseStep2", py_seqPhaseStep2, METH_VARARGS, "Convert from phase format to fasta format"},
@@ -66,6 +72,49 @@ static struct PyModuleDef convPhaseModule{
 	NULL
 };
 
+static PyObject* py_setProgressCallback(PyObject* self, PyObject* args) {
+    PyObject* py_callback;
+    if (!PyArg_ParseTuple(args, "O", &py_callback)) {
+        return NULL;
+    }
+
+    if (py_callback == Py_None) {
+
+        Py_XDECREF(g_pythonProgressCallback);
+        g_pythonProgressCallback = NULL;
+    	Py_RETURN_NONE;
+
+	} else if (PyCallable_Check(py_callback)) {
+
+		Py_XINCREF(py_callback);
+		Py_XDECREF(g_pythonProgressCallback);
+
+		g_pythonProgressCallback = py_callback;
+		Py_RETURN_NONE;
+
+    } else {
+
+        PyErr_SetString(PyExc_TypeError, "Parameter must be callable or None");
+        return NULL;
+	}
+
+}
+
+void py_progressReporter(int value, int maximum, const char * text) {
+    if (g_pythonProgressCallback) {
+        PyObject* args = PyTuple_Pack(3, PyLong_FromLong(value), PyLong_FromLong(maximum), PyUnicode_FromString(text));
+        PyObject* result = PyObject_CallObject(g_pythonProgressCallback, args);
+
+		if (!result) {
+			Py_DECREF(args);
+			throw ProgressCallbackError();
+		}
+
+        Py_XDECREF(result);
+        Py_DECREF(args);
+    }
+}
+
 PyMODINIT_FUNC PyInit__convphase(){
 	initHxcpp();
 
@@ -83,6 +132,8 @@ PyMODINIT_FUNC PyInit__convphase(){
 		Py_DECREF(m);
 		return NULL;
 	}
+
+    g_progressCallback = py_progressReporter;
 
 	return m;
 }
@@ -113,6 +164,7 @@ PyObject* py_seqPhaseStep1(PyObject* self, PyObject* args){
 
 	return tuple;
 }
+
 PyObject* py_phase(PyObject* self, PyObject* args){
 	std::string inpData;
 	std::string knownData;
@@ -148,6 +200,7 @@ PyObject* py_phase(PyObject* self, PyObject* args){
 
 	return PyUnicode_DecodeUTF8(output.output.c_str(), output.output.size(), NULL);
 }
+
 PyObject* py_seqPhaseStep2(PyObject* self, PyObject* args){
 	std::string phaseFile;
 	std::string constFile;
@@ -165,6 +218,7 @@ PyObject* py_seqPhaseStep2(PyObject* self, PyObject* args){
 
 	return PyUnicode_DecodeUTF8(output.c_str(), output.size(), NULL);
 }
+
 PyObject* py_convPhase(PyObject* self, PyObject* args){
 	std::string input;
 	std::vector<char const*> options;
@@ -257,7 +311,20 @@ static PyObject* py_iterPhase(PyObject* self, PyObject* args) {
 		s.data = il.data;
 		input.push_back(s);
 	}
-	std::vector<Sequence> out = convPhase(input, options, reduce, sort);
+
+	std::vector<Sequence> out;
+
+    try {
+		out = convPhase(input, options, reduce, sort);
+    }
+    catch (const ProgressCallbackError& e) {
+		return NULL;
+    }
+    catch (const std::runtime_error& e) {
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+		return NULL;
+    }
+
 	std::vector<OutputLine> output_vector;
 	for(int i = 0; i < out.size(); i += 2){
 		OutputLine ol;

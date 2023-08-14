@@ -67,6 +67,7 @@ workspace("ConvPhase")
 		includedirs {
 			"src/itaxotools/_convphase/include",
 			"build/seqphase_cpp/include",
+			"src/phase/src",
 		}
 
 		if _OPTIONS["includedirs"] then

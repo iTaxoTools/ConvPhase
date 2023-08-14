@@ -4,6 +4,13 @@
 #include <Python.h>
 #include <vector>
 #include <string>
+#include <stdexcept>
+
+class ProgressCallbackError : public std::runtime_error {
+public:
+    ProgressCallbackError()
+        : std::runtime_error("progress callback error") {}
+};
 
 struct InputLine{
 	std::string id;
@@ -21,6 +28,9 @@ struct OutputLinesObject{
     std::vector<OutputLine> lines;
     int current;
 } ;
+
+static PyObject* py_setProgressCallback(PyObject* self, PyObject* args);
+void py_progressReporter(int value, int maximum, const char * text);
 
 static PyObject* py_seqPhaseStep1(PyObject* self, PyObject* args);
 static PyObject* py_phase(PyObject* self, PyObject* args);

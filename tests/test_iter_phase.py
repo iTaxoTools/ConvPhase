@@ -22,11 +22,12 @@ class ConvPhaseTest(NamedTuple):
     def phased(self) -> list[tuple[str, str]]:
         return self.phased_fixture()
 
-    def validate(self):
+    def validate(self, debug=False):
         results = iter_phase(self.unphased, **self.parameters)
         results = list(results)
-        print('f', self.phased)
-        print('g', results)
+        if debug:
+            print('f', self.phased)
+            print('g', results)
         for result, fixed in zip(results, self.phased):
             assert result == fixed
 
@@ -104,11 +105,38 @@ convphase_tests_failing = [
 
 
 @pytest.mark.parametrize('test', convphase_tests)
-def test_convphase(test: AlignTest) -> None:
+def test_convphase(test: ConvPhaseTest) -> None:
     test.validate()
 
 
 @pytest.mark.skip
 @pytest.mark.parametrize('test', convphase_tests_failing)
-def test_convphase_failing(test: AlignTest) -> None:
+def test_convphase_failing(test: ConvPhaseTest) -> None:
     test.validate()
+
+
+def test_progress_callback_out(capsys):
+    from itaxotools.convphase.phase import set_progress_callback
+
+    def progress_callback(value, maximum, text):
+        print(f'{text}: {value}/{maximum}')
+
+    set_progress_callback(progress_callback)
+
+    test = ConvPhaseTest(unphased_simple, phased_simple, {})
+    test.validate()
+
+    captured = capsys.readouterr()
+    assert captured.out
+
+
+def test_progress_callback_none(capsys):
+    from itaxotools.convphase.phase import set_progress_callback
+    set_progress_callback(None)
+
+    test = ConvPhaseTest(unphased_simple, phased_simple, {})
+    test.validate()
+
+    captured = capsys.readouterr()
+    assert not captured.out
+    assert not captured.err

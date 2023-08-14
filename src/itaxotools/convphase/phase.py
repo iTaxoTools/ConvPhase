@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 from itaxotools.taxi2.sequences import Sequences, Sequence
-from itaxotools._convphase import convPhase, iterPhase
+from itaxotools._convphase import convPhase, iterPhase, setProgressCallback
 
 from .files import get_info_from_path, get_handler_from_info
 from .types import PhasedSequence, UnphasedSequence
@@ -80,3 +81,7 @@ def direct_phase(
 
     output = convPhase(*args)
     return output
+
+
+def set_progress_callback(callback: Callable | None):
+    setProgressCallback(callback)
