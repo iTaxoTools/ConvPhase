@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from itaxotools.taxi2.sequences import Sequences, Sequence
+from itaxotools._convphase import convPhase, iterPhase
 
-from .convphase import convPhase, iterPhase
 from .files import get_info_from_path, get_handler_from_info
 from .types import PhasedSequence, UnphasedSequence
 

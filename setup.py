@@ -35,7 +35,7 @@ class BuildConvPhase(Command):
     ]
 
     def initialize_options(self):
-        self.name = 'itaxotools.convphase.convphase'
+        self.name = 'itaxotools._convphase'
 
         self.hxcpp_includes = []
         self.python_includes = []

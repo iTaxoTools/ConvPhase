@@ -62,10 +62,10 @@ workspace("ConvPhase")
 		cppdialect("C++17")
 		architecture(_OPTIONS["arch"])
 
-		files({"src/*.cpp"})
+		files({"src/itaxotools/_convphase/src/*.cpp"})
 
 		includedirs {
-			"include",
+			"src/itaxotools/_convphase/include",
 			"build/seqphase_cpp/include",
 		}
 
@@ -128,7 +128,7 @@ workspace("ConvPhase")
 				"unknown-pragmas"
 			})
 		filter({"options:noPython"})
-			removefiles({"src/python_wrapper.cpp"})
+			removefiles({"src/itaxotools/_convphase/src/python_wrapper.cpp"})
 
 		filter({"configurations:debug"})
 			defines({"DEBUG"})
@@ -160,8 +160,8 @@ workspace("ConvPhase")
 		cppdialect("C++14")
 		architecture(_OPTIONS["arch"])
 
-		files({"phase/src/phase*/*.c", "phase/src/phase*/*.cpp"})
-		includedirs({"phase/src/phase*", "include"})
+		files({"src/phase/src/phase*/*.c", "src/phase/src/phase*/*.cpp"})
+		includedirs({"src/phase/src/phase*", "src/itaxotools/_convphase/include"})
 		location("build")
 		links({})
 		defines({
@@ -196,11 +196,11 @@ workspace("ConvPhase")
 		architecture(_OPTIONS["arch"])
 		location("build")
 		buildmessage("Building SeqPHASE")
-		files("src/dummy.cpp")
+		files("src/itaxotools/_convphase/src/dummy.cpp")
 
 		haxeBuildCmd = {
-			"{CHDIR} ../SeqPHASE/haxe &&",
-			"haxe --cpp ../../build/seqphase_cpp",
+			"{CHDIR} ../src/SeqPHASE/haxe &&",
+			"haxe --cpp ../../../build/seqphase_cpp",
 			"-D static_link",
 			"-D ABI=-MD",
 			"-D HAXE_OUTPUT_FILE=%{cfg.buildtarget.basename}",
@@ -220,7 +220,7 @@ workspace("ConvPhase")
 		})
 		filter("system:windows")
 			postbuildcommands({
-				"{CHDIR} ../../build",
+				"{CHDIR} ../../../build",
 			})
 		filter({})
 		postbuildcommands({

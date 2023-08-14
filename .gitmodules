@@ -1,6 +1,6 @@
-[submodule "SeqPHASE"]
-	path = SeqPHASE
-	url = https://github.com/eeg-ebe/SeqPHASE
-[submodule "phase"]
-	path = phase
-	url = https://github.com/jan-christopher-schmidt/phase.git
+[submodule "src/SeqPHASE"]
+	path = src/SeqPHASE
+	url = https://github.com/iTaxoTools/SeqPHASE.git
+[submodule "src/phase"]
+	path = src/phase
+	url = https://github.com/iTaxoTools/phase.git
