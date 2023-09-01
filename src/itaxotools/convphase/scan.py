@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from itaxotools.taxi2.sequences import Sequences
 
 from .files import get_info_from_path, get_handler_from_info
@@ -17,6 +19,7 @@ def scan_sequences(sequences: Sequences) -> list[PhaseWarning]:
     ids = set([first.id])
     uniform = True
     duplicates = False
+    phased = False
     for sequence in sequences:
         if len(sequence.seq) != length:
             uniform = False
@@ -24,6 +27,8 @@ def scan_sequences(sequences: Sequences) -> list[PhaseWarning]:
             has_missing = _scan_missing(sequence.seq)
         if not duplicates and sequence.id in ids:
             duplicates = True
+        if 'allele' in sequence.extras:
+            phased = True
         ids.add(sequence.id)
     warns = []
     if not uniform:
@@ -32,6 +37,8 @@ def scan_sequences(sequences: Sequences) -> list[PhaseWarning]:
         warns.append(PhaseWarning.Missing())
     if duplicates:
         warns.append(PhaseWarning.Duplicate())
+    if phased:
+        warns.append(PhaseWarning.Phased())
     return warns
 
 

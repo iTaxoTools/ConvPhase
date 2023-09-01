@@ -50,3 +50,9 @@ class Duplicate(PhaseWarning):
     def __init__(self):
         text = 'Dataset contains duplicate ids!'
         super().__init__(text)
+
+
+class Phased(PhaseWarning):
+    def __init__(self):
+        text = 'Sequences are already phased!'
+        super().__init__(text)
