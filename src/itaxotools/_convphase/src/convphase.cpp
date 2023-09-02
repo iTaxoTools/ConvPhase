@@ -28,8 +28,7 @@ SeqPhaseStep1Result seqPhaseStep1(std::string str1, std::string str2, std::strin
 
 	SeqPhaseStep1Result data;
 	if(result->hasErrors()){
-		fprintf(stderr, "Error: SeqPhaseStep1 failed!\n");
-		return data;
+		throw std::runtime_error("Error: SeqPhaseStep1 failed!");
 	}
 	if(result->hasInpFile())
 		data.inpData = result->getInpFile().c_str();
@@ -83,7 +82,7 @@ FastaConverter convPhase(FastaConverter input, std::vector<char const*> options,
 	//printf("pairs: \n%s\n\n\n", phaseResult.pairs.c_str());
 	//printf("signif: \n%s\n\n\n", phaseResult.signif.c_str());
 	//printf("hot: \n%s\n\n\n", phaseResult.hot.c_str());
-	
+
 	//printf("cout: \n%s\n\n\n", phaseResult.cout.c_str());
 	//printf("cerr: \n%s\n\n\n", phaseResult.cerr.c_str());
 
