@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable, NamedTuple
+from typing import NamedTuple
 
 import pytest
 from utility import assert_eq_files
@@ -24,10 +24,6 @@ class MimicTest(NamedTuple):
     def output_path(self) -> Path:
         return TEST_DATA_DIR / self.file
 
-    @property
-    def fixed(self) -> Sequences:
-        return self.fixture()
-
     def validate(self, tmp_path: Path) -> None:
         input_path = TEST_DATA_DIR / self.input_file
         target_path = TEST_DATA_DIR / self.output_file
@@ -46,7 +42,7 @@ phase_tests = [
 
     MimicTest('sample.unphased.fas', 'sample.phased.fas'),
     MimicTest('sample.unphased.fas', 'sample.phased.p03.fas',
-        dict(phase_threshold=0.3)),
+              dict(phase_threshold=0.3)),
 ]
 
 

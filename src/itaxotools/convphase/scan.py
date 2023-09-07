@@ -4,7 +4,7 @@ from pathlib import Path
 
 from itaxotools.taxi2.sequences import Sequences
 
-from .files import get_info_from_path, get_handler_from_info
+from .files import get_handler_from_info, get_info_from_path
 from .types import PhaseWarning
 
 

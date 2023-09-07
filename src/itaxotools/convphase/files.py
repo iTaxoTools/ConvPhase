@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Literal
 
-from itaxotools.taxi2.files import get_info, identify_format
 from itaxotools.taxi2.file_types import FileFormat, FileInfo
+from itaxotools.taxi2.files import get_info, identify_format
 from itaxotools.taxi2.sequences import SequenceHandler
 
 Mode = Literal['r', 'w']
@@ -29,9 +29,9 @@ def get_handler_from_info(path: Path, mode: Mode, info: FileInfo) -> SequenceHan
 
 def _get_handler_from_fasta_info(path: Path, mode: Mode, info: FileInfo.Fasta) -> SequenceHandler:
     kwargs = {}
-    if mode =='r':
+    if mode == 'r':
         kwargs['parse_organism'] = info.has_subsets
-    elif mode =='w':
+    elif mode == 'w':
         kwargs['write_organism'] = info.has_subsets
 
     return SequenceHandler.Fasta(

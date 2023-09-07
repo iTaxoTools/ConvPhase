@@ -199,7 +199,7 @@ class BuildConvPhase(Command):
         return str(Path(package_path / filename).absolute())
 
     def premake(self):
-        plat_name = self.plat_name
+        self.plat_name
         if self.windows:
             version = os.environ.get('VisualStudioVersion', None)
             if version == '16.0':
@@ -275,7 +275,7 @@ class develop(_develop):
 
 setup(
     name='convphase',
-    version='0.0.1',
+    version='0.1.0',
     description='A Python package for ConvPhase',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -290,6 +290,9 @@ setup(
     ],
     extras_require={
         'dev': [
+            'autoflake',
+            'isort',
+            'flake8',
             'pytest',
         ],
     },

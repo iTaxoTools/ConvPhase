@@ -1,12 +1,14 @@
-from sys import argv
 from pathlib import Path
+from sys import argv
+
+from itaxotools.taxi2.sequences import SequenceHandler
 
 from itaxotools.convphase.phase import iter_phase, set_progress_callback
-from itaxotools.taxi2.sequences import SequenceHandler
 
 
 def progress_callback(value, maximum, text):
     print(f'{text}: {value}/{maximum}')
+
 
 set_progress_callback(progress_callback)
 
@@ -19,7 +21,7 @@ with SequenceHandler.Fasta(input_path) as file:
 for z in x:
     print(z)
 
-print('#'*50)
+print('#' * 50)
 y = iter_phase(x, [])
 
 for z in y:

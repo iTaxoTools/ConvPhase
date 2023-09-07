@@ -4,11 +4,12 @@ from pathlib import Path
 from typing import Callable, NamedTuple
 
 import pytest
+from itaxotools.taxi2.file_types import FileFormat
+from itaxotools.taxi2.sequences import Sequence, Sequences
 from utility import assert_eq_files
 
-from itaxotools.taxi2.sequences import Sequence, SequenceHandler, Sequences
-from itaxotools.taxi2.file_types import FileInfo, FileFormat
-from itaxotools.convphase.files import get_info_from_path, get_handler_from_info
+from itaxotools.convphase.files import (
+    get_handler_from_info, get_info_from_path)
 
 TEST_DATA_DIR = Path(__file__).parent / Path(__file__).stem
 
@@ -62,8 +63,9 @@ class InfoTest(NamedTuple):
     def validate(self, tmp_path: Path) -> None:
         file_info = get_info_from_path(self.file_path)
         for field in self.info:
-            assert field in file_info
-            assert self.info[field] == file_info[field]
+            print(field, file_info)
+            assert hasattr(file_info, field)
+            assert getattr(file_info, field) == self.info[field]
 
 
 def sequences_simple() -> Sequences:
@@ -103,7 +105,7 @@ info_tests = [
 
 
 @pytest.mark.parametrize('test', info_tests)
-def test_bad_infos(test: InfoTest, tmp_path: Path) -> None:
+def test_infos(test: InfoTest, tmp_path: Path) -> None:
     test.validate(tmp_path)
 
 

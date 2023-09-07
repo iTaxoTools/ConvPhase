@@ -3,10 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Callable
 
-from itaxotools.taxi2.sequences import Sequences, Sequence
+from itaxotools.taxi2.sequences import Sequence, Sequences
+
 from itaxotools._convphase import convPhase, iterPhase, setProgressCallback
 
-from .files import get_info_from_path, get_handler_from_info
+from .files import get_handler_from_info, get_info_from_path
 from .types import PhasedSequence, UnphasedSequence
 
 

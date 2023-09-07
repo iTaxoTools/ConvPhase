@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import NamedTuple
 
 import pytest
+from typing import Callable
+from itaxotools.taxi2.sequences import Sequence, Sequences
 
-from itaxotools.taxi2.sequences import Sequences, Sequence
 from itaxotools.convphase.scan import scan_sequences
 from itaxotools.convphase.types import PhaseWarning
 
@@ -98,8 +98,6 @@ def duplicate_id_sequences() -> Sequences:
     ])
 
 
-
-
 scan_tests = [
     ScanTest(good_sequences, []),
     ScanTest(empty_sequences, [PhaseWarning.Empty]),
@@ -111,7 +109,7 @@ scan_tests = [
     ScanTest(non_uniform_sequences_1, [PhaseWarning.Length]),
     ScanTest(non_uniform_sequences_2, [PhaseWarning.Length]),
     ScanTest(non_uniform_and_missing_sequences,
-        [PhaseWarning.Length, PhaseWarning.Missing]),
+             [PhaseWarning.Length, PhaseWarning.Missing]),
     ScanTest(duplicate_id_sequences, [PhaseWarning.Duplicate]),
 ]
 

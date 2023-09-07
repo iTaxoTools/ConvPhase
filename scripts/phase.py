@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from sys import argv, stdout
 from pathlib import Path
+from sys import argv
 
 from itaxotools.convphase.phase import phase_mimic_format
 
