@@ -86,7 +86,8 @@ FastaConverter convPhase(FastaConverter input, std::vector<char const*> options,
 	//printf("cout: \n%s\n\n\n", phaseResult.cout.c_str());
 	//printf("cerr: \n%s\n\n\n", phaseResult.cerr.c_str());
 
-	FastaConverter step2 = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
+	std::string phasedFasta = seqPhaseStep2(phaseResult.output, step1.constData, reduce, sort);
+	FastaConverter step2(phasedFasta, FCF_RAWFASTA);
 	for(Sequence& s: step2.sequences){
 		if(s.taxon.size()){
 			s.allele = s.taxon.back();

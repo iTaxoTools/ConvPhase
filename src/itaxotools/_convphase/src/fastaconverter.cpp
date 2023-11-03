@@ -21,7 +21,7 @@ FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 		std::regex re{"\r"};
 		in = std::regex_replace(in, re, "\n");
 	}
-	
+
 	switch(f){
 		case FCF_NONE:
 			parse(in);
@@ -34,6 +34,9 @@ FastaConverter::FastaConverter(std::string in, FastaConverterFormat f){
 			break;
 		case FCF_HAPVIEW_FASTA:
 			parseHapViewFasta(in);
+			break;
+		case FCF_RAWFASTA:
+			parseRawFasta(in);
 			break;
 		case FCF_TSV:
 			parseTsv(in);
@@ -174,6 +177,29 @@ FastaConverter& FastaConverter::parseHapViewFasta(std::string in){
 	if(!format)
 		format = FCF_HAPVIEW_FASTA;
 	return parseFasta(in, "\\.");
+}
+FastaConverter& FastaConverter::parseRawFasta(std::string in){
+	format = FCF_RAWFASTA;
+
+    std::regex fastaRegex(">([^\n]+)\n([^>]+)");
+
+    std::smatch matches;
+    std::string::const_iterator searchStart(in.cbegin());
+
+    while (std::regex_search(searchStart, in.cend(), matches, fastaRegex)) {
+        std::string identifier = matches[1];
+        std::string sequence = matches[2];
+        sequence.erase(std::remove(sequence.begin(), sequence.end(), '\n'), sequence.end());
+
+		Sequence seq;
+		seq.seqid = identifier;
+		seq.data = sequence;
+		sequences.push_back(seq);
+
+        searchStart = matches.suffix().first;
+    }
+
+	return *this;
 }
 FastaConverter& FastaConverter::parseTsv(std::string in){
 	if(!tsvCheck(in)){

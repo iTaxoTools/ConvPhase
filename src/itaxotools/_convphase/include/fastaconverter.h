@@ -17,6 +17,7 @@ enum FastaConverterFormat{
 	FCF_FASTA,
 	FCF_MOID_FASTA,
 	FCF_HAPVIEW_FASTA,
+	FCF_RAWFASTA,
 	FCF_TSV,
 	FCF_NEXUS,
 	FCF_NUM
@@ -36,6 +37,7 @@ public:
 	                                                                  // for regular expression
 	FastaConverter& parseMoIDFasta(std::string in);
 	FastaConverter& parseHapViewFasta(std::string in);
+	FastaConverter& parseRawFasta(std::string in);
 	FastaConverter& parseTsv(std::string in);
 	FastaConverter& parseNexus(std::string in);
 
