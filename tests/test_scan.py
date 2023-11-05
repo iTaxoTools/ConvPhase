@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 import pytest
-from typing import Callable
 from itaxotools.taxi2.sequences import Sequence, Sequences
 
-from itaxotools.convphase.scan import scan_sequences
+from itaxotools.convphase.scan import (
+    scan_input_sequences, scan_output_sequences)
 from itaxotools.convphase.types import PhaseWarning
 
 
-class ScanTest(NamedTuple):
+class ScanInputTest(NamedTuple):
     fixture: Callable[[], Sequences]
     warns: list[PhaseWarning]
 
@@ -19,9 +19,23 @@ class ScanTest(NamedTuple):
         return self.fixture()
 
     def validate(self):
-        warns = scan_sequences(self.sequences)
-        assert len(self.warns) == len(warns)
-        assert set(warn() for warn in self.warns) == set(warns)
+        warns = scan_input_sequences(self.sequences)
+        for w in warns:
+            assert w in self.warns
+
+
+class ScanOutputTest(NamedTuple):
+    fixture: Callable[[], Sequences]
+    warns: list[PhaseWarning]
+
+    @property
+    def sequences(self) -> Sequences:
+        return self.fixture()
+
+    def validate(self):
+        warns = scan_output_sequences(self.sequences)
+        for w in warns:
+            assert w in self.warns
 
 
 def good_sequences() -> Sequences:
@@ -98,22 +112,31 @@ def duplicate_id_sequences() -> Sequences:
     ])
 
 
+def ambiguous_sequences() -> Sequences:
+    return Sequences([
+        Sequence('id1', 'ASN'),
+        Sequence('id2', 'wG-'),
+    ])
+
+
 scan_tests = [
-    ScanTest(good_sequences, []),
-    ScanTest(empty_sequences, [PhaseWarning.Empty]),
-    ScanTest(missing_sequences_1, [PhaseWarning.Missing]),
-    ScanTest(missing_sequences_2, [PhaseWarning.Missing]),
-    ScanTest(missing_sequences_3, [PhaseWarning.Missing]),
-    ScanTest(missing_sequences_4, [PhaseWarning.Missing]),
-    ScanTest(missing_sequences_5, [PhaseWarning.Missing]),
-    ScanTest(non_uniform_sequences_1, [PhaseWarning.Length]),
-    ScanTest(non_uniform_sequences_2, [PhaseWarning.Length]),
-    ScanTest(non_uniform_and_missing_sequences,
-             [PhaseWarning.Length, PhaseWarning.Missing]),
-    ScanTest(duplicate_id_sequences, [PhaseWarning.Duplicate]),
+    ScanInputTest(good_sequences, []),
+    ScanInputTest(empty_sequences, [PhaseWarning.Empty()]),
+    ScanInputTest(missing_sequences_1, [PhaseWarning.Missing()]),
+    ScanInputTest(missing_sequences_2, [PhaseWarning.Missing()]),
+    ScanInputTest(missing_sequences_3, [PhaseWarning.Missing()]),
+    ScanInputTest(missing_sequences_4, [PhaseWarning.Missing()]),
+    ScanInputTest(missing_sequences_5, [PhaseWarning.Missing()]),
+    ScanInputTest(non_uniform_sequences_1, [PhaseWarning.Length()]),
+    ScanInputTest(non_uniform_sequences_2, [PhaseWarning.Length()]),
+    ScanInputTest(non_uniform_and_missing_sequences, [PhaseWarning.Length(), PhaseWarning.Missing()]),
+    ScanInputTest(duplicate_id_sequences, [PhaseWarning.Duplicate()]),
+
+    ScanOutputTest(good_sequences, []),
+    ScanOutputTest(ambiguous_sequences, [PhaseWarning.Ambiguity('swn', ['id2', 'id1'])]),
 ]
 
 
 @pytest.mark.parametrize('test', scan_tests)
-def test_scan(test: ScanTest) -> None:
+def test_scan(test: ScanInputTest | ScanOutputTest) -> None:
     test.validate()

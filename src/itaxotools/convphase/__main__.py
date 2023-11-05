@@ -5,7 +5,7 @@ from pathlib import Path
 from sys import stderr
 
 from .phase import phase_mimic_format
-from .scan import scan_path
+from .scan import scan_input_path
 
 
 def run():
@@ -31,7 +31,7 @@ def run():
     del args.output
 
     print('', file=stderr)
-    warns = scan_path(input_path)
+    warns = scan_input_path(input_path)
     for warn in warns:
         print('Warning:', str(warn), file=stderr)
 
