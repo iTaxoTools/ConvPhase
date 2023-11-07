@@ -77,7 +77,7 @@ class Ambiguity(PhaseWarning):
         super().__init__(text)
 
     def __eq__(self, other):
-        if type(other) is type(self):
+        if not isinstance(other, Ambiguity):
             return False
         if set(self.characters) != set(other.characters):
             return False
