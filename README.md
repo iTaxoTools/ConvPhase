@@ -2,7 +2,7 @@
 
 A convenient phase program.
 
-The purpose of this program is to combine the [PHASE](https://github.com/stephens999/phase) and [SeqPHASE](https://github.com/eeg-ebe/SeqPHASE) into a single python package, while making some crucial configuration options available.
+The purpose of this program is to combine [PHASE](https://github.com/stephens999/phase) and [SeqPHASE](https://github.com/eeg-ebe/SeqPHASE) into a single python package, while making some crucial configuration options available.
 
 Unfortunately, internal communication between *PHASE* and *SeqPHASE* is done through Fasta files. However, an iterative protocol was implemented to parse and write common Python datatypes. It is also possible to work with TSV and Fasta variants (MolD, HapView) by leveraging [Taxi2](https://github.com/iTaxoTools/taxi2).
 
@@ -18,7 +18,7 @@ cd ConvPhase
 pip install -e . -f packages.html
 ```
 
-This will automatically retrieve Taxi2, PHASE & SeqPHASE and begin compilation of the C++ backend.
+This will automatically retrieve PHASE, SeqPHASE & Taxi2 and begin compilation of the C++ backend.
 
 *(you will need all dependencies when building from source, see below)*
 
@@ -27,8 +27,8 @@ This will automatically retrieve Taxi2, PHASE & SeqPHASE and begin compilation o
 The package comes with a command-line tool:
 
 ```
-convphase samples/sample.fas ambiguous.fas
-convphase samples/sample.tsv phased.tsv -p 0.4 -q 0.4
+convphase examples/simple.fas ambiguous.fas
+convphase examples/simple.tsv phased.tsv -p 0.4 -q 0.4
 ```
 
 The program will replicate the input file format for the output file.<br>
@@ -49,6 +49,9 @@ Building from source requires:
 - C++ compiler ([GCC](https://gcc.gnu.org/), [msvc](https://visualstudio.microsoft.com/vs/features/cplusplus/))
 - [haxe](https://haxe.org/) & [hxcpp](https://lib.haxe.org/p/hxcpp/)
 - [premake](https://premake.github.io/)
+
+If also building Taxi2 from source:
+- [Rust](https://www.rust-lang.org/tools/install)
 
 *PHASE* and *SeqPHASE* are included as git submodules.<br>
 *Taxi2* is included as a setuptools dependency.
