@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from pathlib import Path
 from sys import argv
 
@@ -13,19 +15,20 @@ def progress_callback(value, maximum, text):
 set_progress_callback(progress_callback)
 
 
-input_path = Path(argv[1])
+if __name__ == '__main__':
 
-with SequenceHandler.Fasta(input_path) as file:
-    x = [(a.id, a.seq) for a in file]
+    input_path = Path(argv[1])
 
-for z in x:
-    print(z)
+    with SequenceHandler.Fasta(input_path) as file:
+        x = [(a.id, a.seq) for a in file]
 
-print('#' * 50)
-y = iter_phase(x, [])
+    for z in x:
+        print(z)
 
-for z in y:
-    print(z)
+    print('#' * 50)
+    y = iter_phase(x, [])
 
-# del y
-print('Done')
+    for z in y:
+        print(z)
+
+    print('Done')
