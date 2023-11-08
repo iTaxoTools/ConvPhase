@@ -275,7 +275,7 @@ class develop(_develop):
 
 setup(
     name='convphase',
-    version='0.1.0',
+    version='0.1.1',
     description='A Python package for ConvPhase',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -286,7 +286,7 @@ setup(
     ),
     python_requires='>=3.10.2, <4',
     install_requires=[
-        'taxi2==2.1.1',
+        'taxi2==2.1.2',
     ],
     extras_require={
         'dev': [
