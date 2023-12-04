@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
 	////printf("%s", fasta.c_str());
 
 	//return 0;
-	
+
 
 
 	//initHxcpp();
