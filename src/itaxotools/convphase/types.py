@@ -17,7 +17,7 @@ class PhasedSequence(NamedTuple):
 
 
 class PhaseWarning(Type):
-    def __init__(self, text=''):
+    def __init__(self, text=""):
         self.text = text
 
     def __str__(self):
@@ -32,47 +32,47 @@ class PhaseWarning(Type):
 
 class Empty(PhaseWarning):
     def __init__(self):
-        text = 'Dataset is empty!'
+        text = "Dataset is empty!"
         super().__init__(text)
 
 
 class Length(PhaseWarning):
     def __init__(self):
-        text = 'Sequences are not of uniform length!'
+        text = "Sequences are not of uniform length!"
         super().__init__(text)
 
 
 class Missing(PhaseWarning):
     def __init__(self):
-        text = 'Sequences contain gaps or missing nucleotides!'
+        text = "Sequences contain gaps or missing nucleotides!"
         super().__init__(text)
 
 
 class Duplicate(PhaseWarning):
     def __init__(self):
-        text = 'Dataset contains duplicate ids!'
+        text = "Dataset contains duplicate ids!"
         super().__init__(text)
 
 
 class Phased(PhaseWarning):
     def __init__(self):
-        text = 'Sequences are already phased!'
+        text = "Sequences are already phased!"
         super().__init__(text)
 
 
 class Ambiguity(PhaseWarning):
     def __init__(self, characters: Iterable[str], identifiers: Iterable[str]):
-        self.characters = ''.join(c.upper() for c in characters)
+        self.characters = "".join(c.upper() for c in characters)
         self.identifiers = frozenset(identifiers)
 
-        identifiers_str = ', '.join(repr(id) for id in list(self.identifiers)[:3])
+        identifiers_str = ", ".join(repr(id) for id in list(self.identifiers)[:3])
         if len(self.identifiers) > 3:
-            identifiers_str += f' and {len(self.identifiers) - 3} more'
+            identifiers_str += f" and {len(self.identifiers) - 3} more"
 
-        character_s = 's' if len(self.characters) > 1 else ''
-        identifier_s = 's' if len(self.identifiers) > 1 else ''
+        character_s = "s" if len(self.characters) > 1 else ""
+        identifier_s = "s" if len(self.identifiers) > 1 else ""
 
-        text = f'Ambiguity code{character_s} detected: {repr(self.characters)} for individual{identifier_s}: {identifiers_str}!'
+        text = f"Ambiguity code{character_s} detected: {repr(self.characters)} for individual{identifier_s}: {identifiers_str}!"
 
         super().__init__(text)
 

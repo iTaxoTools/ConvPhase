@@ -4,12 +4,11 @@ from pathlib import Path
 from typing import Callable, NamedTuple
 
 import pytest
-from itaxotools.taxi2.file_types import FileFormat
-from itaxotools.taxi2.sequences import Sequence, Sequences
 from utility import assert_eq_files
 
-from itaxotools.convphase.files import (
-    get_handler_from_info, get_info_from_path)
+from itaxotools.convphase.files import get_handler_from_info, get_info_from_path
+from itaxotools.taxi2.file_types import FileFormat
+from itaxotools.taxi2.sequences import Sequence, Sequences
 
 TEST_DATA_DIR = Path(__file__).parent / Path(__file__).stem
 
@@ -33,7 +32,7 @@ class HandlerTest(NamedTuple):
 
     def validate_write(self, output_path: Path) -> None:
         info = get_info_from_path(self.file_path)
-        handler = get_handler_from_info(output_path, 'w', info)
+        handler = get_handler_from_info(output_path, "w", info)
         with handler as file:
             for sequence in self.fixed:
                 file.write(sequence)
@@ -41,7 +40,7 @@ class HandlerTest(NamedTuple):
 
     def validate_read(self) -> None:
         info = get_info_from_path(self.file_path)
-        handler = get_handler_from_info(self.file_path, 'r', info)
+        handler = get_handler_from_info(self.file_path, "r", info)
         file_sequences = []
         with handler as file:
             for sequence in file:
@@ -69,53 +68,57 @@ class InfoTest(NamedTuple):
 
 
 def sequences_simple() -> Sequences:
-    return Sequences([
-        Sequence('id1', 'ATC'),
-        Sequence('id2', 'ATG'),
-        Sequence('id3', 'ATA'),
-    ])
+    return Sequences(
+        [
+            Sequence("id1", "ATC"),
+            Sequence("id2", "ATG"),
+            Sequence("id3", "ATA"),
+        ]
+    )
 
 
 def sequences_organism() -> Sequences:
-    return Sequences([
-        Sequence('id1', 'ATC', {'organism': 'X'}),
-        Sequence('id2', 'ATG', {'organism': 'Y'}),
-        Sequence('id3', 'ATA', {'organism': 'Z'}),
-    ])
+    return Sequences(
+        [
+            Sequence("id1", "ATC", {"organism": "X"}),
+            Sequence("id2", "ATG", {"organism": "Y"}),
+            Sequence("id3", "ATA", {"organism": "Z"}),
+        ]
+    )
 
 
 handler_tests = [
-    HandlerTest(sequences_simple, 'simple.fas'),
-    HandlerTest(sequences_organism, 'organism.fas'),
-    HandlerTest(sequences_organism, 'organism.dot.fas'),
-    HandlerTest(sequences_simple, 'simple.tsv'),
-    HandlerTest(sequences_organism, 'organism.tsv'),
+    HandlerTest(sequences_simple, "simple.fas"),
+    HandlerTest(sequences_organism, "organism.fas"),
+    HandlerTest(sequences_organism, "organism.dot.fas"),
+    HandlerTest(sequences_simple, "simple.tsv"),
+    HandlerTest(sequences_organism, "organism.tsv"),
 ]
 
 
-@pytest.mark.parametrize('test', handler_tests)
+@pytest.mark.parametrize("test", handler_tests)
 def test_files(test: HandlerTest, tmp_path: Path) -> None:
     test.validate(tmp_path)
 
 
 info_tests = [
-    InfoTest('simple.tsv', dict(format=FileFormat.Tabfile)),
-    InfoTest('simple.fas', dict(format=FileFormat.Fasta)),
+    InfoTest("simple.tsv", dict(format=FileFormat.Tabfile)),
+    InfoTest("simple.fas", dict(format=FileFormat.Fasta)),
 ]
 
 
-@pytest.mark.parametrize('test', info_tests)
+@pytest.mark.parametrize("test", info_tests)
 def test_infos(test: InfoTest, tmp_path: Path) -> None:
     test.validate(tmp_path)
 
 
 bad_info_tests = [
-    InfoTest('empty.tsv'),
-    InfoTest('no_headers.tsv'),
+    InfoTest("empty.tsv"),
+    InfoTest("no_headers.tsv"),
 ]
 
 
-@pytest.mark.parametrize('test', bad_info_tests)
+@pytest.mark.parametrize("test", bad_info_tests)
 def test_bad_infos(test: InfoTest, tmp_path: Path) -> None:
     with pytest.raises(Exception):
         test.validate(tmp_path)

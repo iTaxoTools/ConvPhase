@@ -33,19 +33,18 @@ class MimicTest(NamedTuple):
 
 
 phase_tests = [
-    MimicTest('simple.unphased.fas', 'simple.phased.fas'),
-    MimicTest('organism.unphased.fas', 'organism.phased.fas'),
-    MimicTest('organism.dot.unphased.fas', 'organism.dot.phased.fas'),
-
-    MimicTest('simple.unphased.tsv', 'simple.phased.tsv'),
-    MimicTest('organism.unphased.tsv', 'organism.phased.tsv'),
-
-    MimicTest('sample.unphased.fas', 'sample.phased.fas'),
-    MimicTest('sample.unphased.fas', 'sample.phased.p03.fas',
-              dict(phase_threshold=0.3)),
+    MimicTest("simple.unphased.fas", "simple.phased.fas"),
+    MimicTest("organism.unphased.fas", "organism.phased.fas"),
+    MimicTest("organism.dot.unphased.fas", "organism.dot.phased.fas"),
+    MimicTest("simple.unphased.tsv", "simple.phased.tsv"),
+    MimicTest("organism.unphased.tsv", "organism.phased.tsv"),
+    MimicTest("sample.unphased.fas", "sample.phased.fas"),
+    MimicTest(
+        "sample.unphased.fas", "sample.phased.p03.fas", dict(phase_threshold=0.3)
+    ),
 ]
 
 
-@pytest.mark.parametrize('test', phase_tests)
+@pytest.mark.parametrize("test", phase_tests)
 def test_mimic(test: MimicTest, tmp_path: Path) -> None:
     test.validate(tmp_path)

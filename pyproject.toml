@@ -46,6 +46,10 @@ wheel.packages = ["src/itaxotools"]
 [tool.ruff]
 ignore-init-module-imports = true
 extend-select = ["I"]
+exclude = [
+    "src/SeqPHASE",
+    "src/phase",
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["itaxotools"]

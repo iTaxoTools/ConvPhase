@@ -27,7 +27,7 @@ def scan_input_sequences(sequences: Sequences) -> list[PhaseWarning]:
             has_missing = _scan_missing(sequence.seq)
         if not duplicates and sequence.id in ids:
             duplicates = True
-        if 'allele' in sequence.extras:
+        if "allele" in sequence.extras:
             phased = True
         ids.add(sequence.id)
     warns = []
@@ -44,12 +44,12 @@ def scan_input_sequences(sequences: Sequences) -> list[PhaseWarning]:
 
 def scan_input_path(path: Path) -> list[PhaseWarning]:
     info = get_info_from_path(path)
-    data = Sequences(get_handler_from_info, path, 'r', info)
+    data = Sequences(get_handler_from_info, path, "r", info)
     return scan_input_sequences(data)
 
 
 def _scan_missing(seq: str) -> bool:
-    for x in 'nN?-':
+    for x in "nN?-":
         if x in seq:
             return True
     return False
@@ -63,7 +63,7 @@ def scan_output_sequences(sequences: Sequences) -> list[PhaseWarning]:
         ambiguous = False
         for character in sequence.seq:
             character == character.upper()
-            if character not in 'ACGT-':
+            if character not in "ACGT-":
                 ambiguity_characters.add(character)
                 ambiguous = True
         if ambiguous:
@@ -71,12 +71,13 @@ def scan_output_sequences(sequences: Sequences) -> list[PhaseWarning]:
 
     warns = []
     if ambiguity_characters:
-        warns.append(PhaseWarning.Ambiguity(
-            ambiguity_characters, ambiguity_identifiers))
+        warns.append(
+            PhaseWarning.Ambiguity(ambiguity_characters, ambiguity_identifiers)
+        )
     return warns
 
 
 def scan_output_path(path: Path) -> list[PhaseWarning]:
     info = get_info_from_path(path)
-    data = Sequences(get_handler_from_info, path, 'r', info)
+    data = Sequences(get_handler_from_info, path, "r", info)
     return scan_output_sequences(data)
