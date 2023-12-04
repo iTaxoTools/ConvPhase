@@ -1,0 +1,32 @@
+name: Install Python dependencies
+description: |
+  Use the frozen versions for Python and external dependencies,
+  but fetch internal dependencies from TestPyPI.
+
+runs:
+  using: composite
+  steps:
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -vvv -i https://test.pypi.org/simple -r requirements-testpypi.txt
+        echo oooooooooooooooooooooooooooooooooooooo
+        pwd
+        echo oooooooooooooooooooooooooooooooooooooo
+        readlink -f src/SeqPHASE/haxe
+        echo oooooooooooooooooooooooooooooooooooooo
+        ls -al src/SeqPHASE/haxe
+        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        ls -al /mnt/c/Users/stefa/Projects/ConvPhase/src/SeqPhase
+        pip install .

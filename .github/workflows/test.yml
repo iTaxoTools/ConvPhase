@@ -1,0 +1,80 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-latest:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.2
+
+      - name: Install hxcpp
+        run: |
+          haxe -version
+          haxelib install hxcpp
+
+      - name: Set up latest Python
+        uses: ./.github/actions/python-latest
+
+      - name: Lint with pre-commit
+        uses: pre-commit/action@v3.0.0
+
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          pytest
+
+
+  test-frozen:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.2
+
+      - name: Install hxcpp
+        run: |
+          haxe -version
+          haxelib install hxcpp
+
+      - name: Set up test Python
+        uses: ./.github/actions/python-test
+
+      - name: Lint with pre-commit
+        uses: pre-commit/action@v3.0.0
+
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          pytest
