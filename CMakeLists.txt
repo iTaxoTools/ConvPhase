@@ -17,15 +17,13 @@ ExternalProject_Add(
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/SeqPhase/haxe
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-)
+    INSTALL_COMMAND "")
 
 ExternalProject_Add_Step(
-    SeqPhaseLib
-    SeqPhaseLib_haxe_build
-    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D HAXE_OUTPUT_FILE=seqphase SeqPhase1.hx SeqPhase2.hx -D HXCPP_M64
-    WORKING_DIRECTORY <SOURCE_DIR>
-)
+    SeqPhaseLib SeqPhaseLib_haxe_build
+    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D
+            HAXE_OUTPUT_FILE=seqphase SeqPhase1.hx SeqPhase2.hx -D HXCPP_M64
+    WORKING_DIRECTORY <SOURCE_DIR>)
 
 
 # PHASE
@@ -36,14 +34,14 @@ set(PHASE_SOURCES ${PHASE_SOURCES_CPP} ${PHASE_SOURCES_C})
 
 file(GLOB PHASE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/src/phase/src/phase*
-    ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/include
-)
+    ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/include)
 
 add_library(phase STATIC ${PHASE_SOURCES})
 target_include_directories(phase PUBLIC ${PHASE_INCLUDE_DIRS})
 set_property(TARGET phase PROPERTY CXX_STANDARD 14)
 
-target_compile_definitions(phase PRIVATE
+target_compile_definitions(
+    phase PRIVATE
     -DCP_PHASE_LIB
     -DCP_PHASE_NOFILE
     -DCP_PHASE_DISABLE_COUT
@@ -56,17 +54,14 @@ target_compile_definitions(phase PRIVATE
 execute_process(
     COMMAND haxelib libpath hxcpp
     OUTPUT_VARIABLE HAXELIB_HXCPP_PATH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 file(GLOB PYMODULE_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/src/*.cpp
-)
+    ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/src/*.cpp)
 set(PYMODULE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/include
     ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build/include
-    ${HAXELIB_HXCPP_PATH}/include
-)
+    ${HAXELIB_HXCPP_PATH}/include)
 
 python_add_library(_convphase MODULE ${PYMODULE_SOURCES} WITH_SOABI)
 target_include_directories(_convphase PRIVATE ${PYMODULE_INCLUDE_DIRS})
