@@ -1,7 +1,7 @@
 #include "python_wrapper.h"
 #include "convphase.h"
 #include "fastaconverter.h"
-#include "phase.2.1.1.source/globals.hpp"
+#include "globals.hpp"
 
 
 PyObject* g_pythonProgressCallback = NULL;
