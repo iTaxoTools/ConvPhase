@@ -19,14 +19,4 @@ runs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -vvv -i https://test.pypi.org/simple -r requirements-testpypi.txt
-        echo oooooooooooooooooooooooooooooooooooooo
-        pwd
-        echo oooooooooooooooooooooooooooooooooooooo
-        readlink -f src/SeqPHASE/haxe
-        echo oooooooooooooooooooooooooooooooooooooo
-        ls -al src/SeqPHASE/haxe
-        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        ls -al /mnt/c/Users/stefa/Projects/ConvPhase/src/SeqPhase
         pip install .
