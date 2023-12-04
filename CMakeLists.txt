@@ -8,8 +8,6 @@ find_package(
     COMPONENTS Interpreter Development.Module
     REQUIRED)
 
-message(STATUS "Target Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
-message(STATUS "Target Platform: ${CMAKE_SYSTEM_NAME}")
 
 # SeqPHASE
 
@@ -55,13 +53,19 @@ target_compile_definitions(phase PRIVATE
 
 # ConvPhase
 
+execute_process(
+    COMMAND haxelib libpath hxcpp
+    OUTPUT_VARIABLE HAXELIB_HXCPP_PATH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 file(GLOB PYMODULE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/src/*.cpp
 )
 set(PYMODULE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/include
     ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build/include
-    C:\\HaxeToolkit\\haxe\\lib\\hxcpp/4,3,2/include
+    ${HAXELIB_HXCPP_PATH}/include
 )
 
 python_add_library(_convphase MODULE ${PYMODULE_SOURCES} WITH_SOABI)
@@ -70,10 +74,18 @@ add_dependencies(_convphase SeqPhaseLib)
 target_link_directories(_convphase PRIVATE ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build)
 target_link_libraries(_convphase PRIVATE seqphase phase)
 set_property(TARGET phase PROPERTY CXX_STANDARD 14)
-target_compile_definitions(_convphase PRIVATE
-    -DHX_WINDOWS
-    -DHXCPP_M64
-)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_definitions(_convphase PRIVATE -DHX_WINDOWS)
+endif()
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    target_compile_definitions(_convphase PRIVATE -DHXCPP_M64)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+    target_compile_definitions(_convphase PRIVATE -DHXCPP_ARM64)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "win32|x86|i386|i686")
+    target_compile_definitions(_convphase PRIVATE -DHXCPP_M32)
+endif()
 
 
 install(TARGETS _convphase DESTINATION itaxotools)
