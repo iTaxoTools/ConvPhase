@@ -21,8 +21,9 @@ ExternalProject_Add(
 
 ExternalProject_Add_Step(
     SeqPhaseLib SeqPhaseLib_haxe_build
-    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D
-            HAXE_OUTPUT_FILE=seqphase SeqPhase1.hx SeqPhase2.hx -D HXCPP_M64
+    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D HXCPP_ARM64
+            -D HAXE_OUTPUT_FILE=seqphase
+            SeqPhase1.hx SeqPhase2.hx
     WORKING_DIRECTORY <SOURCE_DIR>)
 
 
@@ -68,10 +69,17 @@ target_include_directories(_convphase PRIVATE ${PYMODULE_INCLUDE_DIRS})
 add_dependencies(_convphase SeqPhaseLib)
 target_link_directories(_convphase PRIVATE ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build)
 target_link_libraries(_convphase PRIVATE seqphase phase)
-set_property(TARGET phase PROPERTY CXX_STANDARD 14)
+set_property(TARGET _convphase PROPERTY CXX_STANDARD 17)
+
+target_compile_definitions(
+    _convphase PRIVATE
+    -DCP_PHASE_LIB
+    -DHXCPP_API_LEVEL=400)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(_convphase PRIVATE -DHX_WINDOWS)
+else()
+    add_compile_options(-pedantic)
 endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
