@@ -22,7 +22,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
-dependencies = []
+dependencies = [
+    "itaxotools-common",
+    "itaxotools-taxi2",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -32,6 +35,9 @@ dev = [
     "ruff",
     "pytest",
 ]
+
+[project.scripts]
+convphase = "itaxotools.convphase.__main__:run"
 
 [project.urls]
 Homepage = "https://itaxotools.org/"

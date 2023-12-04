@@ -8,6 +8,8 @@ find_package(
     COMPONENTS Interpreter Development.Module
     REQUIRED)
 
+message(STATUS "Target Architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "Target Platform: ${CMAKE_SYSTEM_NAME}")
 
 # SeqPHASE
 
