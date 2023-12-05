@@ -14,7 +14,7 @@ find_package(
 ExternalProject_Add(
     SeqPhase
     PREFIX ${CMAKE_BINARY_DIR}/seqphase
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/SeqPhase/haxe
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/SeqPHASE/haxe
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND "")
