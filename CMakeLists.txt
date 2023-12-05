@@ -8,6 +8,10 @@ find_package(
     COMPONENTS Interpreter Development.Module
     REQUIRED)
 
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_compile_options(-pedantic)
+endif()
+
 
 # SeqPHASE
 
@@ -79,8 +83,6 @@ target_compile_definitions(
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(_convphase PRIVATE -DHX_WINDOWS)
-else()
-    add_compile_options(-pedantic)
 endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
