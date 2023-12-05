@@ -12,7 +12,7 @@ find_package(
 # SeqPHASE
 
 ExternalProject_Add(
-    SeqPhaseLib
+    SeqPhase
     PREFIX ${CMAKE_BINARY_DIR}/seqphase
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/SeqPhase/haxe
     CONFIGURE_COMMAND ""
@@ -20,9 +20,9 @@ ExternalProject_Add(
     INSTALL_COMMAND "")
 
 ExternalProject_Add_Step(
-    SeqPhaseLib SeqPhaseLib_haxe_build
-    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D HXCPP_ARM64
-            -D HAXE_OUTPUT_FILE=seqphase
+    SeqPhase haxe
+    COMMAND haxe --cpp <BINARY_DIR> -D static_link -D ABI=-MD -D HXCPP_M64
+            -D HAXE_OUTPUT_FILE=${CMAKE_SHARED_LIBRARY_PREFIX}seqphase
             SeqPhase1.hx SeqPhase2.hx
     WORKING_DIRECTORY <SOURCE_DIR>)
 
@@ -43,10 +43,10 @@ set_property(TARGET phase PROPERTY CXX_STANDARD 14)
 
 target_compile_definitions(
     phase PRIVATE
-    -DCP_PHASE_LIB
-    -DCP_PHASE_NOFILE
-    -DCP_PHASE_DISABLE_COUT
-    -DCP_PHASE_DISABLE_CERR
+    -D CP_PHASE_LIB
+    -D CP_PHASE_NOFILE
+    -D CP_PHASE_DISABLE_COUT
+    -D CP_PHASE_DISABLE_CERR
 )
 
 
@@ -61,20 +61,21 @@ file(GLOB PYMODULE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/src/*.cpp)
 set(PYMODULE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/src/itaxotools/_convphase/include
-    ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build/include
+    ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhase-build/include
     ${HAXELIB_HXCPP_PATH}/include)
 
 python_add_library(_convphase MODULE ${PYMODULE_SOURCES} WITH_SOABI)
 target_include_directories(_convphase PRIVATE ${PYMODULE_INCLUDE_DIRS})
-add_dependencies(_convphase SeqPhaseLib)
-target_link_directories(_convphase PRIVATE ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhaseLib-build)
+add_dependencies(_convphase SeqPhase)
+# target_link_directories(_convphase PRIVATE ${PROJECT_SOURCE_DIR}/src/SeqPHASE/haxe/magic)
+target_link_directories(_convphase PRIVATE ${CMAKE_BINARY_DIR}/seqphase/src/SeqPhase-build)
 target_link_libraries(_convphase PRIVATE seqphase phase)
 set_property(TARGET _convphase PROPERTY CXX_STANDARD 17)
 
 target_compile_definitions(
     _convphase PRIVATE
-    -DCP_PHASE_LIB
-    -DHXCPP_API_LEVEL=400)
+    -D CP_PHASE_LIB
+    -D HXCPP_API_LEVEL=400)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(_convphase PRIVATE -DHX_WINDOWS)
@@ -83,11 +84,11 @@ else()
 endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
-    target_compile_definitions(_convphase PRIVATE -DHXCPP_M64)
+    target_compile_definitions(_convphase PRIVATE -D HXCPP_M64)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
-    target_compile_definitions(_convphase PRIVATE -DHXCPP_ARM64)
+    target_compile_definitions(_convphase PRIVATE -D HXCPP_ARM64)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "win32|x86|i386|i686")
-    target_compile_definitions(_convphase PRIVATE -DHXCPP_M32)
+    target_compile_definitions(_convphase PRIVATE -D HXCPP_M32)
 endif()
 
 
