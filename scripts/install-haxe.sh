@@ -28,8 +28,8 @@ cd /opt/haxe
 curl -LO $NEKO_URL/$NEKO_TAG/$NEKO_TARBALL
 curl -LO $HAXE_URL/$HAXE_TAG/$HAXE_TARBALL
 
-tar zxvf $NEKO_TARBALL
-tar zxvf $HAXE_TARBALL
+tar zxf $NEKO_TARBALL
+tar zxf $HAXE_TARBALL
 
 NEKO_DIR=`tar -tzf $NEKO_TARBALL | head -1 | cut -f1 -d"/"`
 HAXE_DIR=`tar -tzf $HAXE_TARBALL | head -1 | cut -f1 -d"/"`
@@ -42,4 +42,4 @@ export PATH=/opt/haxe/$HAXE_DIR:$PATH
 
 mkdir ~/haxelib
 haxelib setup ~/haxelib
-haxelib install hxcpp "4.3.2"
+haxelib --quiet install hxcpp "4.3.2"

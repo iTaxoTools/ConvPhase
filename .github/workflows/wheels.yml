@@ -33,7 +33,7 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 3
           CIBW_BEFORE_BUILD_LINUX: >
-            bash scripts/install-haxe.sh
+            source scripts/install-haxe.sh
           CIBW_BEFORE_TEST: >
             pip install -r requirements.txt &&
             pip install -i https://test.pypi.org/simple/ -r requirements-testpypi.txt
