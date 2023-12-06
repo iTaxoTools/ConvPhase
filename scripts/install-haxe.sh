@@ -23,8 +23,8 @@ NEKO_TARBALL="neko-2.3.0-linux64.tar.gz"
 HAXE_TARBALL="haxe-4.2.5-linux64.tar.gz"
 
 
-mkdir /opt/haxe
-cd /opt/haxe
+mkdir /tmp/haxe
+cd /tmp/haxe
 
 curl -LO $NEKO_URL/$NEKO_TAG/$NEKO_TARBALL
 curl -LO $HAXE_URL/$HAXE_TAG/$HAXE_TARBALL
@@ -35,12 +35,14 @@ tar zxf $HAXE_TARBALL
 NEKO_DIR=`tar -tzf $NEKO_TARBALL | head -1 | cut -f1 -d"/"`
 HAXE_DIR=`tar -tzf $HAXE_TARBALL | head -1 | cut -f1 -d"/"`
 
-
-export NEKOPATH=/opt/haxe/$NEKO_DIR
-export LD_LIBRARY_PATH=$NEKOPATH:$LD_LIBRARY_PATH
-export PATH=/opt/haxe/$HAXE_DIR:$PATH
-
+mv /tmp/haxe/$NEKO_DIR /opt/neko
+mv /tmp/haxe/$HAXE_DIR /opt/haxe
 
 mkdir ~/haxelib
 haxelib setup ~/haxelib
 haxelib --quiet install hxcpp "4.3.2"
+
+
+export NEKOPATH=/opt/neko
+export LD_LIBRARY_PATH=/opt/neko:$LD_LIBRARY_PATH
+export PATH=/opt/haxe:/opt/neko:$PATH

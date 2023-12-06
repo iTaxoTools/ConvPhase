@@ -35,11 +35,15 @@ jobs:
           CIBW_BUILD_VERBOSITY: 3
           CIBW_BEFORE_BUILD_LINUX: >
             source scripts/install-haxe.sh
+          CIBW_ENVIRONMENT_LINUX: >
+            PATH=/opt/haxe:/opt/neko:$PATH'
+            LD_LIBRARY_PATH=/opt/neko:$LD_LIBRARY_PATH
+            NEKOPATH=/opt/neko
           CIBW_BEFORE_TEST: >
             pip install -r requirements.txt &&
             pip install -i https://test.pypi.org/simple/ -r requirements-testpypi.txt
-          CIBW_SKIP: "pp* *-win32"
-          CIBW_ARCHS_MACOS: x86_64 arm64
+          CIBW_SKIP: "pp* *-win32 *-i686"
+          CIBW_ARCHS_MACOS: "auto64 arm64"
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v3
