@@ -38,11 +38,12 @@ HAXE_DIR=`tar -tzf $HAXE_TARBALL | head -1 | cut -f1 -d"/"`
 mv /tmp/haxe/$NEKO_DIR /opt/neko
 mv /tmp/haxe/$HAXE_DIR /opt/haxe
 
-mkdir ~/haxelib
-haxelib setup ~/haxelib
-haxelib --quiet install hxcpp "4.3.2"
-
 
 export NEKOPATH=/opt/neko
 export LD_LIBRARY_PATH=/opt/neko:$LD_LIBRARY_PATH
 export PATH=/opt/haxe:/opt/neko:$PATH
+
+
+mkdir ~/haxelib
+haxelib setup ~/haxelib
+haxelib --quiet install hxcpp "4.3.2"
