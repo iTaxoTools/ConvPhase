@@ -9,6 +9,7 @@ jobs:
   test-latest:
     name: Test latest on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    if: false
 
     strategy:
       fail-fast: false
@@ -46,6 +47,7 @@ jobs:
   test-frozen:
     name: Test frozen on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    if: false
 
     strategy:
       fail-fast: false

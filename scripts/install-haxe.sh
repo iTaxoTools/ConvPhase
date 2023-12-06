@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Install haxe inside a linux x64 container
+# List: https://cibuildwheel.readthedocs.io/en/stable/options/#linux-image
 # Repository: https://quay.io/pypa/manylinux2014_x86_64
 # Image: 2023-12-05-e9f0345
 

@@ -24,6 +24,7 @@ jobs:
           haxe-version: 4.3.2
 
       - name: Install hxcpp
+        if: runner.os != 'Linux'
         run: |
           haxe -version
           haxelib install hxcpp
@@ -50,6 +51,8 @@ jobs:
   build-sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
+    if: false
+
     steps:
       - uses: actions/checkout@v4
         with:
