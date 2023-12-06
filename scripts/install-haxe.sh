@@ -6,7 +6,7 @@
 
 # We install an older version of haxe for compatibility with glibc 2.17
 
-if [ -f "/.dockerenv" ] || grep -q "docker" /proc/1/cgroup; then
+if ! [ -f "/.dockerenv" ] && ! grep -q "docker" /proc/1/cgroup; then
     echo "Not inside a docker container!"
     exit 1
 fi
