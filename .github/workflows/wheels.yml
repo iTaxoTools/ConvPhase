@@ -33,7 +33,6 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 3
           CIBW_BEFORE_BUILD_LINUX: >
-            yum update &&
             yum install haxe-4.3.2-1 -y &&
             mkdir ~/haxelib &&
             haxelib setup ~/haxelib &&
