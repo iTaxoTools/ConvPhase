@@ -36,7 +36,7 @@ jobs:
           CIBW_BEFORE_BUILD_LINUX: >
             source scripts/install-haxe.sh
           CIBW_ENVIRONMENT_LINUX: >
-            PATH=/opt/haxe:/opt/neko:$PATH'
+            PATH=/opt/haxe:/opt/neko:$PATH
             LD_LIBRARY_PATH=/opt/neko:$LD_LIBRARY_PATH
             NEKOPATH=/opt/neko
           CIBW_BEFORE_TEST: >
