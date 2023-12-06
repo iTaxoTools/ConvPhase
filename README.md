@@ -1,5 +1,10 @@
 # ConvPhase
 
+[![GitHub - Tests](https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml/badge.svg)](
+    https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml)
+[![GitHub - Wheels](https://github.com/iTaxoTools/ConvPhase/actions/workflows/wheels.yml/badge.svg)](
+    https://github.com/iTaxoTools/ConvPhase/actions/workflows/wheels.yml)
+
 A convenient phase program.
 
 The purpose of this program is to combine [PHASE](https://github.com/stephens999/phase) and [SeqPHASE](https://github.com/eeg-ebe/SeqPHASE) into a single python package, while making some crucial configuration options available.
