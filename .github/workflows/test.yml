@@ -9,7 +9,6 @@ jobs:
   test-latest:
     name: Test latest on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    if: false
 
     strategy:
       fail-fast: false
@@ -23,14 +22,8 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - uses: krdlab/setup-haxe@v1
-        with:
-          haxe-version: 4.3.2
-
-      - name: Install hxcpp
-        run: |
-          haxe -version
-          haxelib install hxcpp
+      - name: Set up haxe
+        uses: ./.github/actions/setup-haxe
 
       - name: Set up latest Python
         uses: ./.github/actions/python-latest
@@ -47,7 +40,6 @@ jobs:
   test-frozen:
     name: Test frozen on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    if: false
 
     strategy:
       fail-fast: false
@@ -61,14 +53,8 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - uses: krdlab/setup-haxe@v1
-        with:
-          haxe-version: 4.3.2
-
-      - name: Install hxcpp
-        run: |
-          haxe -version
-          haxelib install hxcpp
+      - name: Set up haxe
+        uses: ./.github/actions/setup-haxe
 
       - name: Set up test Python
         uses: ./.github/actions/python-test
