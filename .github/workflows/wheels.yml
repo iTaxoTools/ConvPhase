@@ -33,7 +33,7 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 3
           CIBW_BEFORE_BUILD_LINUX: >
-            dnf install haxe -y &&
+            yum install haxe -y &&
             mkdir ~/haxelib &&
             haxelib setup ~/haxelib &&
             haxelib install hxcpp 4.3.2
