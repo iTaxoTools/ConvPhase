@@ -2,8 +2,8 @@
 
 [![GitHub - Tests](https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml/badge.svg)](
     https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml)
-[![GitHub - Wheels](https://github.com/iTaxoTools/ConvPhase/actions/workflows/wheels.yml/badge.svg)](
-    https://github.com/iTaxoTools/ConvPhase/actions/workflows/wheels.yml)
+[![GitHub - Deploy](https://github.com/iTaxoTools/ConvPhase/actions/workflows/deploy.yml/badge.svg)](
+    https://github.com/iTaxoTools/ConvPhase/actions/workflows/deploy.yml)
 
 A convenient phase program.
 
