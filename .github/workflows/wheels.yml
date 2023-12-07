@@ -7,6 +7,7 @@ jobs:
   build-wheels:
     name: Build wheels for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -89,6 +90,28 @@ jobs:
 
       - name: Build sdist
         run: pipx run build --sdist
+
+      - name: Set up haxe
+        uses: ./.github/actions/setup-haxe
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -vvv -i https://test.pypi.org/simple -r requirements-testpypi.txt
+
+      - name: Install source distribution
+        run: pip install dist/*.tar.gz
+
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          pytest
 
       - uses: actions/upload-artifact@v3
         with:
