@@ -8,8 +8,10 @@ cibuildwheel==2.16.2
 colorama==0.4.6
 contourpy==1.2.0
 cycler==0.12.1
+delocate==0.10.6
 distlib==0.3.7
 et-xmlfile==1.1.0
+exceptiongroup==1.2.0
 filelock==3.13.1
 fonttools==4.46.0
 identify==2.5.32
@@ -34,6 +36,7 @@ ruff==0.1.6
 seaborn==0.13.0
 setuptools-scm==8.0.4
 six==1.16.0
+tomli==2.0.1
 typing_extensions==4.8.0
 tzdata==2023.3
 virtualenv==20.25.0
