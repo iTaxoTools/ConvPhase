@@ -48,7 +48,7 @@ jobs:
 
   fuse-wheels:
     name: Fuse macOS wheels
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: build-wheels
 
     steps:
