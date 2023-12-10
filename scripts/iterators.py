@@ -24,7 +24,8 @@ if __name__ == "__main__":
         print(z)
 
     print("#" * 50)
-    y = iter_phase(x, [])
+    y = iter_phase(x)
+    print("#" * 50)
 
     for z in y:
         print(z)

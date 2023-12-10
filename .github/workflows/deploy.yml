@@ -36,7 +36,7 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 3
           CIBW_BEFORE_BUILD_LINUX: >
-            source scripts/install-haxe.sh
+            source tools/install-haxe.sh
           CIBW_ENVIRONMENT_LINUX: >
             PATH=/opt/haxe:/opt/neko:$PATH
             LD_LIBRARY_PATH=/opt/neko:$LD_LIBRARY_PATH
@@ -73,7 +73,7 @@ jobs:
       - name: Create universal2 wheels
         run: |
           pip install delocate
-          python scripts/fuse-wheels.py
+          python tools/fuse-wheels.py
 
       - name: Upload universal2 wheels
         uses: actions/upload-artifact@v3
