@@ -3,11 +3,11 @@ name: Tests
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
-  test-latest:
-    name: Test latest on ${{ matrix.os }}
+  test:
+    name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,45 +19,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true
           fetch-depth: 0
 
       - name: Set up haxe
         uses: ./.github/actions/setup-haxe
 
-      - name: Set up latest Python
-        uses: ./.github/actions/python-latest
-
-      - name: Lint with pre-commit
-        uses: pre-commit/action@v3.0.0
-
-      - name: Test with pytest
-        run: |
-          pip install pytest
-          pytest
-
-
-  test-frozen:
-    name: Test frozen on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04, windows-2019, macos-11]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          submodules: true
-          fetch-depth: 0
+          python-version: 3.x
 
-      - name: Set up haxe
-        uses: ./.github/actions/setup-haxe
-
-      - name: Set up test Python
-        uses: ./.github/actions/python-test
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-live.txt
+          pip install ".[dev]"
 
       - name: Lint with pre-commit
         uses: pre-commit/action@v3.0.0
