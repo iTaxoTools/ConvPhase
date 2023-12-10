@@ -15,7 +15,8 @@ The purpose of this program is to combine [PHASE](https://github.com/stephens999
 
 Unfortunately, internal communication between *PHASE* and *SeqPHASE* is done through Fasta files. However, an iterative protocol was implemented to parse and write common Python datatypes. It is also possible to work with TSV and Fasta variants (MolD, HapView) by leveraging [Taxi2](https://github.com/iTaxoTools/TaxI2).
 
-[*You may also be interested in the GUI*](https://github.com/iTaxoTools/ConvPhaseGui)
+This is a computational backend. For the GUI application, please visit
+[ConvPhaseGui](https://github.com/iTaxoTools/ConvPhaseGui).
 
 ## Installation
 
@@ -24,6 +25,18 @@ ConvPhase is available on PyPI. You can install it through `pip`:
 ```
 pip install itaxotools-convphase
 ```
+
+## Executables
+
+[![Windows](https://img.shields.io/badge/Windows-blue.svg?style=for-the-badge&logo=windows)](
+    https://github.com/iTaxoTools/ConvPhaseGui/releases/latest)
+[![MacOS](https://img.shields.io/badge/macOS-gray.svg?style=for-the-badge&logo=apple)](
+    https://github.com/iTaxoTools/ConvPhaseGui/releases/latest)
+
+Download and run the standalone executables without installing Python from [the latest ConvPhaseGui release page](
+    https://github.com/iTaxoTools/ConvPhaseGui/releases/latest).
+
+No executables are currently provided for the command-line tool.
 
 ## Usage
 
@@ -44,7 +57,7 @@ The following options from *PHASE* are available:
 - thinning interval (-t)
 - burn-in (-b)
 
-For examples on using the Python API, look at the [scripts](./scripts/) folder.
+For some examples on how to use the Python API, please have look at the [scripts](./scripts/) folder.
 
 ## Dependencies
 
