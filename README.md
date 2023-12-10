@@ -53,10 +53,6 @@ For examples on using the Python API, look at the [scripts](./scripts/) folder.
 Building from source requires:
 - C++ compiler ([GCC](https://gcc.gnu.org/), [msvc](https://visualstudio.microsoft.com/vs/features/cplusplus/))
 - [haxe](https://haxe.org/) & [hxcpp](https://lib.haxe.org/p/hxcpp/)
-- [premake](https://premake.github.io/)
-
-If also building Taxi2 from source:
-- [Rust](https://www.rust-lang.org/tools/install)
 
 *PHASE* and *SeqPHASE* are included as git submodules.<br>
 *Taxi2* is included as a setuptools dependency.

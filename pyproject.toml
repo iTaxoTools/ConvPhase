@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core", "setuptools_scm"]
+requires = ["scikit-build-core", "setuptools-scm"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -29,8 +29,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "setuptools_scm",
+    "setuptools-scm",
     "cibuildwheel",
+    "delocate",
     "pre-commit",
     "ruff",
     "pytest",
