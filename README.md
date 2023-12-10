@@ -1,31 +1,29 @@
 # ConvPhase
 
-[![GitHub - Tests](https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml/badge.svg)](
+[![PyPI - Version](https://img.shields.io/pypi/v/itaxotools-convphase)](
+    https://pypi.org/project/itaxotools-convphase)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/itaxotools-convphase)](
+    https://pypi.org/project/itaxotools-convphase)
+[![PyPI - License](https://img.shields.io/pypi/l/itaxotools-convphase)](
+    https://pypi.org/project/itaxotools-convphase)
+[![GitHub - Tests](https://img.shields.io/github/actions/workflow/status/iTaxoTools/ConvPhase/test.yml?label=tests)](
     https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml)
-[![GitHub - Deploy](https://github.com/iTaxoTools/ConvPhase/actions/workflows/deploy.yml/badge.svg)](
-    https://github.com/iTaxoTools/ConvPhase/actions/workflows/deploy.yml)
 
 A convenient phase program.
 
 The purpose of this program is to combine [PHASE](https://github.com/stephens999/phase) and [SeqPHASE](https://github.com/eeg-ebe/SeqPHASE) into a single python package, while making some crucial configuration options available.
 
-Unfortunately, internal communication between *PHASE* and *SeqPHASE* is done through Fasta files. However, an iterative protocol was implemented to parse and write common Python datatypes. It is also possible to work with TSV and Fasta variants (MolD, HapView) by leveraging [Taxi2](https://github.com/iTaxoTools/taxi2).
+Unfortunately, internal communication between *PHASE* and *SeqPHASE* is done through Fasta files. However, an iterative protocol was implemented to parse and write common Python datatypes. It is also possible to work with TSV and Fasta variants (MolD, HapView) by leveraging [Taxi2](https://github.com/iTaxoTools/TaxI2).
 
 [*You may also be interested in the GUI*](https://github.com/iTaxoTools/ConvPhaseGui)
 
 ## Installation
 
-Clone the repository, then install using `pip`:
+ConvPhase is available on PyPI. You can install it through `pip`:
 
 ```
-git clone https://github.com/iTaxoTools/ConvPhase.git
-cd ConvPhase
-pip install -e . -f packages.html
+pip install itaxotools-convphase
 ```
-
-This will automatically retrieve PHASE, SeqPHASE & Taxi2 and begin compilation of the C++ backend.
-
-*(you will need all dependencies when building from source, see below)*
 
 ## Usage
 
