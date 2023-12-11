@@ -1,10 +1,8 @@
 # ConvPhase
 
-[![PyPI - Version](https://img.shields.io/pypi/v/itaxotools-convphase)](
+[![PyPI - Version](https://img.shields.io/pypi/v/itaxotools-convphase?color=tomato)](
     https://pypi.org/project/itaxotools-convphase)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/itaxotools-convphase)](
-    https://pypi.org/project/itaxotools-convphase)
-[![PyPI - License](https://img.shields.io/pypi/l/itaxotools-convphase)](
     https://pypi.org/project/itaxotools-convphase)
 [![GitHub - Tests](https://img.shields.io/github/actions/workflow/status/iTaxoTools/ConvPhase/test.yml?label=tests)](
     https://github.com/iTaxoTools/ConvPhase/actions/workflows/test.yml)
@@ -28,15 +26,17 @@ pip install itaxotools-convphase
 
 ## Executables
 
+[![Release](https://img.shields.io/badge/latest_release-ConvPhaseGui-tomato?style=for-the-badge)](
+    https://github.com/iTaxoTools/ConvPhaseGui/releases/latest)
 [![Windows](https://img.shields.io/badge/Windows-blue.svg?style=for-the-badge&logo=windows)](
     https://github.com/iTaxoTools/ConvPhaseGui/releases/latest)
-[![MacOS](https://img.shields.io/badge/macOS-gray.svg?style=for-the-badge&logo=apple)](
+[![MacOS](https://img.shields.io/badge/macOS-slategray.svg?style=for-the-badge&logo=apple)](
     https://github.com/iTaxoTools/ConvPhaseGui/releases/latest)
 
 Download and run the standalone executables without installing Python from [the latest ConvPhaseGui release page](
     https://github.com/iTaxoTools/ConvPhaseGui/releases/latest).
 
-No executables are currently provided for the command-line tool.
+No executables are currently provided for the command-line tool, which is only available after installation.
 
 ## Usage
 
